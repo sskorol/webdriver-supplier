@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd" >
+<suite name="Smoke suite 5">
+	<test name="Test block 9">
+		<classes>
+			<class name="io.github.sskorol.testcases.FactoryTests5">
+				<methods>
+					<parameter name="platform" value="WINDOWS"/>
+					<include name="test17">
+						<parameter name="browserName" value="edge"/>
+						<parameter name="version" value="41.2.3"/>
+						<parameter name="platform" value="WINDOWS"/>
+					</include>
+				</methods>
+			</class>
+			<class name="io.github.sskorol.testcases.FactoryTests4">
+				<methods>
+					<include name="test16">
+						<parameter name="browserName" value="chrome"/>
+						<parameter name="version" value="54.0.5"/>
+						<parameter name="platform" value="MAC"/>
+					</include>
+				</methods>
+			</class>
+		</classes>
+	</test>
+	<test name="Test block 10">
+		<classes>
+			<class name="io.github.sskorol.testcases.FactoryTests5">
+				<methods>
+					<include name="test18">
+						<parameter name="browserName" value="chrome"/>
+						<parameter name="version" value="20.20.20"/>
+						<parameter name="platform" value="LINUX"/>
+					</include>
+				</methods>
+			</class>
+			<class name="io.github.sskorol.testcases.FactoryTests4">
+				<methods>
+					<include name="test15">
+						<parameter name="browserName" value="ie"/>
+						<parameter name="version" value="11.256.2"/>
+						<parameter name="platform" value="WINDOWS"/>
+					</include>
+				</methods>
+			</class>
+		</classes>
+	</test>
+</suite>

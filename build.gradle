@@ -1,0 +1,84 @@
+plugins {
+    id "ru.vyarus.quality" version "2.3.0"
+    id "com.jfrog.bintray" version "1.7.3"
+    id 'net.researchgate.release' version '2.4.0'
+}
+
+group 'io.github.sskorol'
+version = version
+description 'WebDriver Supplier library, which helps to effectively manage web browser sessions.'
+
+ext {
+    gradleScriptDir = "${rootProject.projectDir}/gradle"
+    projectUrl = "https://github.com/sskorol/webdriver-supplier"
+}
+
+apply plugin: 'java'
+apply plugin: 'jacoco'
+apply from: "${gradleScriptDir}/bintray.gradle"
+apply from: "${gradleScriptDir}/release.gradle"
+apply from: "${gradleScriptDir}/maven-publish.gradle"
+
+sourceCompatibility = JavaVersion.VERSION_1_8
+targetCompatibility = JavaVersion.VERSION_1_8
+
+repositories {
+    jcenter()
+}
+
+dependencies {
+    compile('org.testng:testng:6.11',
+            'org.jooq:joor:0.9.6',
+            'one.util:streamex:0.6.5',
+            'org.projectlombok:lombok:1.16.18',
+            'io.vavr:vavr:0.9.0',
+            'org.slf4j:slf4j-simple:1.7.25',
+            'org.seleniumhq.selenium:selenium-java:3.5.3',
+            'io.github.bonigarcia:webdrivermanager:1.7.1',
+            'org.aeonbits.owner:owner-java8:1.0.6'
+    )
+    testCompile('org.assertj:assertj-core:3.8.0',
+            'org.mockito:mockito-core:2.7.19',
+            'org.powermock:powermock-api-mockito2:1.7.1',
+            'org.powermock:powermock-module-testng:1.7.1'
+    )
+}
+
+task wrapper(type: Wrapper) {
+    gradleVersion '4.1'
+}
+
+task sourceJar(type: Jar, dependsOn: classes) {
+    classifier = 'sources'
+    from sourceSets.main.allJava
+}
+
+tasks.withType(Javadoc) {
+    options.addStringOption('Xdoclint:none', '-quiet')
+}
+
+task javadocJar(type: Jar, dependsOn: javadoc) {
+    classifier = 'javadoc'
+    from javadoc.destinationDir
+}
+
+artifacts {
+    archives sourceJar
+    archives javadocJar
+}
+
+test {
+    useTestNG() {
+        suites 'src/test/resources/smoke-suite.xml'
+    }
+}
+
+jacocoTestReport {
+    executionData = files("${buildDir}/jacoco/test.exec")
+    reports {
+        xml.enabled = true
+        xml.destination file("${buildDir}/reports/jacoco/report.xml")
+        html.enabled = true
+        html.destination file("${buildDir}/reports/jacocoHtml")
+    }
+}

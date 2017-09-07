@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd" >
+<suite name="Smoke suite 2">
+	<parameter name="browserName" value="chrome"/>
+	<parameter name="version" value="1.1.0"/>
+	<parameter name="platform" value="MAC"/>
+	<test name="Test block 3">
+		<parameter name="browserName" value="firefox"/>
+		<parameter name="version" value="1.1.1"/>
+		<parameter name="platform" value="LINUX"/>
+		<classes>
+			<class name="io.github.sskorol.testcases.FactoryTests2">
+				<methods>
+					<parameter name="browserName" value="ie"/>
+					<parameter name="version" value="1.1.2"/>
+					<parameter name="platform" value="WINDOWS"/>
+					<include name="test7">
+						<parameter name="browserName" value="edge"/>
+						<parameter name="version" value="1.1.3"/>
+						<parameter name="platform" value="WINDOWS"/>
+					</include>
+				</methods>
+			</class>
+			<class name="io.github.sskorol.testcases.FactoryTests1">
+				<methods>
+					<parameter name="browserName" value="edge"/>
+					<parameter name="version" value="1.1.4"/>
+					<parameter name="platform" value="WINDOWS"/>
+					<include name="test2">
+						<parameter name="browserName" value="chrome"/>
+						<parameter name="version" value="1.1.5"/>
+						<parameter name="platform" value="LINUX"/>
+					</include>
+				</methods>
+			</class>
+		</classes>
+	</test>
+	<test name="Test block 4">
+		<parameter name="browserName" value="ie"/>
+		<parameter name="version" value="5.1.4"/>
+		<parameter name="platform" value="WINDOWS"/>
+		<classes>
+			<class name="io.github.sskorol.testcases.FactoryTests2">
+				<methods>
+					<parameter name="browserName" value="edge"/>
+					<parameter name="version" value="10.4.1"/>
+					<parameter name="platform" value="WINDOWS"/>
+					<include name="test8">
+						<parameter name="browserName" value="firefox"/>
+						<parameter name="version" value="0.0.9"/>
+						<parameter name="platform" value="MAC"/>
+					</include>
+				</methods>
+			</class>
+			<class name="io.github.sskorol.testcases.FactoryTests1">
+				<methods>
+					<parameter name="browserName" value="chrome"/>
+					<parameter name="version" value="25.0.8"/>
+					<parameter name="platform" value="LINUX"/>
+					<include name="test4">
+						<parameter name="browserName" value="chrome"/>
+						<parameter name="version" value="28.9.3"/>
+						<parameter name="platform" value="MAC"/>
+					</include>
+				</methods>
+			</class>
+		</classes>
+	</test>
+</suite>

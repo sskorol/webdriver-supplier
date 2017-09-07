@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd" >
+<suite name="Smoke suite 4">
+	<test name="Test block 7">
+		<parameter name="browserName" value="firefox"/>
+		<parameter name="version" value="0.2.5"/>
+		<parameter name="platform" value="LINUX"/>
+		<classes>
+			<class name="io.github.sskorol.testcases.FactoryTests4"/>
+		</classes>
+	</test>
+	<test name="Test block 8">
+		<parameter name="browserName" value="edge"/>
+		<parameter name="version" value="2.3.1"/>
+		<parameter name="platform" value="WINDOWS"/>
+		<classes>
+			<class name="io.github.sskorol.testcases.FactoryTests4"/>
+		</classes>
+	</test>
+</suite>

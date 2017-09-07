@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd" >
+<suite name="Smoke suite 1">
+	<test name="Test block 1">
+		<classes>
+			<class name="io.github.sskorol.testcases.FactoryTests1">
+				<methods>
+					<parameter name="browserName" value="opera"/>
+					<include name="test1"/>
+				</methods>
+			</class>
+			<class name="io.github.sskorol.testcases.FactoryTests2">
+				<methods>
+					<parameter name="browserName" value="firefox"/>
+					<parameter name="platform" value="ANY"/>
+					<include name="test5"/>
+				</methods>
+			</class>
+			<class name="io.github.sskorol.testcases.FactoryTests3">
+				<methods>
+					<include name="test9"/>
+				</methods>
+			</class>
+		</classes>
+	</test>
+</suite>

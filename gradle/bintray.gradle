@@ -1,0 +1,30 @@
+apply plugin: 'com.jfrog.bintray'
+
+bintray {
+    user = project.hasProperty('bintrayUser') ? project.property('bintrayUser') : System.getenv('BINTRAY_USER')
+    key = project.hasProperty('bintrayApiKey') ? project.property('bintrayApiKey') : System.getenv('BINTRAY_API_KEY')
+
+    configurations = ['archives']
+
+    publish = true
+    pkg {
+        repo = 'webdriver-supplier'
+        name = 'webdriver-supplier'
+        desc = 'WebDriver Factory which works with TestNG'
+        websiteUrl = 'https://github.com/sskorol/webdriver-supplier'
+        issueTrackerUrl = 'https://github.com/sskorol/webdriver-supplier'
+        vcsUrl = 'https://github.com/sskorol/webdriver-supplier.git'
+        licenses = ['Apache-2.0']
+
+        githubRepo = 'sskorol/webdriver-supplier'
+        githubReleaseNotesFile = 'README.md'
+
+        version {
+            name = project.version
+            released = new Date()
+            gpg {
+                sign = true
+            }
+        }
+    }
+}

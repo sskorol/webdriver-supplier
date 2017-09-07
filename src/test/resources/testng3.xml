@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd" >
+<suite name="Smoke suite 3">
+	<parameter name="browserName" value="chrome"/>
+	<parameter name="version" value="0.1.0"/>
+	<parameter name="platform" value="MAC"/>
+	<test name="Test block 5">
+		<classes>
+			<class name="io.github.sskorol.testcases.FactoryTests3"/>
+		</classes>
+	</test>
+	<test name="Test block 6">
+		<classes>
+			<class name="io.github.sskorol.testcases.FactoryTests5"/>
+		</classes>
+	</test>
+</suite>
