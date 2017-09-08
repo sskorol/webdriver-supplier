@@ -180,9 +180,9 @@ Note that you have to provide at least browser name on any of the following leve
 	<parameter name="browserName" value="chrome"/>
 	<parameter name="version" value="1.1.0"/>
 	<parameter name="platform" value="MAC"/>
-	
-	<!-- Test level parameters -->	
+		
 	<test name="Test block name">
+		<!-- Test level parameters -->	
 		<parameter name="browserName" value="firefox"/>
 		<parameter name="version" value="1.1.1"/>
 		<parameter name="platform" value="LINUX"/>
