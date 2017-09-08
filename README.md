@@ -337,12 +337,10 @@ public class Firefox implements Browser {
         return Name.Firefox;
     }
     
-    @Override
     public boolean isRemote() {
         return true;
     }
     
-    @Override
     public Capabilities configuration(final XmlConfig context) {
         final DesiredCapabilities capabilities = DesiredCapabilities.firefox();
         capabilities.setCapability("enableVNC", true);
@@ -350,6 +348,12 @@ public class Firefox implements Browser {
         return defaultConfiguration(context).merge(capabilities);
     }
 }
+```
+
+##### io.github.sskorol.core.Browser
+
+```text
+full.path.to.Firefox
 ```
 
 ##### smoke-suite.xml
@@ -366,12 +370,6 @@ public class Firefox implements Browser {
 		</classes>
 	</test>
 </suite>
-```
-
-##### io.github.sskorol.core.Browser
-
-```text
-full.path.to.Firefox
 ```
 
 ##### BasePage.java
@@ -393,17 +391,17 @@ public abstract class BasePage {
         driver.get(url);
     }    
        
-	protected void click(final By locator) {
-		waitFor(locator, ExpectedConditions::elementToBeClickable).click();
-	}
+    protected void click(final By locator) {
+        waitFor(locator, ExpectedConditions::elementToBeClickable).click();
+    }
     
-	protected void type(final By locator, final CharSequence text) {
-		waitFor(locator, ExpectedConditions::visibilityOfElementLocated).sendKeys(text);
-	}
+    protected void type(final By locator, final CharSequence text) {
+        waitFor(locator, ExpectedConditions::visibilityOfElementLocated).sendKeys(text);
+    }
         
-	private WebElement waitFor(final By locator, final Function<By, ExpectedCondition<WebElement>> condition) {
-		return wait.until(condition.apply(locator));
-	}    
+    private WebElement waitFor(final By locator, final Function<By, ExpectedCondition<WebElement>> condition) {
+        return wait.until(condition.apply(locator));
+    }    
 }
 ```
 
