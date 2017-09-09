@@ -127,7 +127,7 @@ public class Chrome implements Browser {
 }
 ```
 
-By default only `name()` method should be overridden. You pick one from the following enum:
+By default only `name()` method should be overridden. You can pick one from the following enum:
 
 ```java
 enum Name {
