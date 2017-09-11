@@ -38,7 +38,7 @@ dependencies {
             'org.aeonbits.owner:owner-java8:1.0.9'
     )
     testCompile('org.assertj:assertj-core:3.8.0',
-            'org.mockito:mockito-core:2.9.0',
+            'org.mockito:mockito-core:2.10.0',
             'org.powermock:powermock-api-mockito2:1.7.1',
             'org.powermock:powermock-module-testng:1.7.1'
     )
