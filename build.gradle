@@ -1,5 +1,5 @@
 plugins {
-    id "ru.vyarus.quality" version "2.3.0"
+    id "ru.vyarus.quality" version "2.4.0"
     id "com.jfrog.bintray" version "1.7.3"
     id 'net.researchgate.release' version '2.4.0'
 }
@@ -39,13 +39,13 @@ dependencies {
     )
     testCompile('org.assertj:assertj-core:3.8.0',
             'org.mockito:mockito-core:2.10.0',
-            'org.powermock:powermock-api-mockito2:1.7.1',
-            'org.powermock:powermock-module-testng:1.7.1'
+            'org.powermock:powermock-api-mockito2:2.0.0-beta.5',
+            'org.powermock:powermock-module-testng:2.0.0-beta.5'
     )
 }
 
 task wrapper(type: Wrapper) {
-    gradleVersion '4.1'
+    gradleVersion '4.2'
 }
 
 task sourceJar(type: Jar, dependsOn: classes) {
