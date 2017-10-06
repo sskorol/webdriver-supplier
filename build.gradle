@@ -31,10 +31,10 @@ dependencies {
             'org.jooq:joor:0.9.6',
             'one.util:streamex:0.6.5',
             'org.projectlombok:lombok:1.16.18',
-            'io.vavr:vavr:0.9.0',
+            'io.vavr:vavr:0.9.1',
             'org.slf4j:slf4j-simple:1.7.25',
-            'org.seleniumhq.selenium:selenium-java:3.5.3',
-            'io.github.bonigarcia:webdrivermanager:1.7.1',
+            'org.seleniumhq.selenium:selenium-java:3.6.0',
+            'io.github.bonigarcia:webdrivermanager:1.7.2',
             'org.aeonbits.owner:owner-java8:1.0.9'
     )
     testCompile('org.assertj:assertj-core:3.8.0',
@@ -45,7 +45,7 @@ dependencies {
 }
 
 task wrapper(type: Wrapper) {
-    gradleVersion '4.2'
+    gradleVersion '4.2.1'
 }
 
 task sourceJar(type: Jar, dependsOn: classes) {
