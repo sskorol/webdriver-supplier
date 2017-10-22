@@ -10,7 +10,8 @@ import org.joor.Reflect;
 import org.openqa.selenium.Capabilities;
 import org.openqa.selenium.Platform;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.edge.EdgeDriver;
+import org.openqa.selenium.edge.EdgeOptions;
 import org.openqa.selenium.remote.RemoteWebDriver;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
@@ -33,6 +34,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.ThrowableAssert.catchThrowable;
 import static org.joor.Reflect.on;
 import static org.mockito.Mockito.*;
+import static org.openqa.selenium.remote.CapabilityType.BROWSER_NAME;
+import static org.openqa.selenium.remote.CapabilityType.PLATFORM;
 
 @PrepareForTest(WebDriverManager.class)
 public class CoreTests extends PowerMockTestCase {
@@ -110,7 +113,7 @@ public class CoreTests extends PowerMockTestCase {
     @Test
     public void shouldRetrieveBrowserDefaults() {
         final Map<String, String> chromeParameters = new HashMap<>();
-        chromeParameters.put("browserName", "chrome");
+        chromeParameters.put(BROWSER_NAME, "chrome");
 
         final XmlConfig config = new XmlConfig(chromeParameters);
         final Browser chrome = StreamEx.of(browsers)
@@ -132,6 +135,19 @@ public class CoreTests extends PowerMockTestCase {
     }
 
     @Test
+    public void shouldRetrieveBrowserWithOptions() {
+        final Map<String, String> edgeParameters = new HashMap<>();
+        edgeParameters.put(BROWSER_NAME, "edge");
+
+        final XmlConfig config = new XmlConfig(edgeParameters);
+        final Browser edge = StreamEx.of(browsers)
+                                       .findFirst(b -> b.name() == Browser.Name.Edge)
+                                       .orElseThrow(() -> new AssertionError("Unable to retrieve Edge"));
+
+        assertThat(edge.configuration(config)).isEqualTo(edge.merge(config, new EdgeOptions()));
+    }
+
+    @Test
     public void shouldCreateDriverFactories() {
         assertThat(factories).hasSize(2);
         assertThat(StreamEx.of(factories).findFirst(f -> f.label().equals(WDP_DEFAULT)))
@@ -142,8 +158,8 @@ public class CoreTests extends PowerMockTestCase {
     public void shouldCreateRemoteDriverInstance() throws MalformedURLException {
         XmlConfig config = new XmlConfig(new HashMap<String, String>() {
             {
-                put("browserName", "firefox");
-                put("platform", "ANY");
+                put(BROWSER_NAME, "firefox");
+                put(PLATFORM, "ANY");
             }
         });
 
@@ -159,37 +175,37 @@ public class CoreTests extends PowerMockTestCase {
 
     @Test
     public void shouldCreateLocalDriverInstance() throws Exception {
-        Browser chrome = StreamEx.of(browsers)
-                                 .findFirst(f -> f.name() == Browser.Name.Chrome)
+        Browser edge = StreamEx.of(browsers)
+                                 .findFirst(f -> f.name() == Browser.Name.Edge)
                                  .orElseThrow(() -> new AssertionError(
-                                         "Unable to get Chrome implementation"));
+                                         "Unable to get Edge implementation"));
 
         XmlConfig config = new XmlConfig(new HashMap<String, String>() {
             {
-                put("browserName", "chrome");
+                put(BROWSER_NAME, "edge");
             }
         });
 
         PowerMockito.mockStatic(WebDriverManager.class);
         BrowserManager browserManager = mock(BrowserManager.class, RETURNS_DEEP_STUBS);
-        WebDriver driver = mock(ChromeDriver.class, RETURNS_DEEP_STUBS);
+        WebDriver driver = mock(EdgeDriver.class, RETURNS_DEEP_STUBS);
         WebDriverProvider spyFactory = spy(defaultFactory);
-        Reflect spyReflectedDriver = spy(spyFactory.wrapDriver(chrome));
+        Reflect spyReflectedDriver = spy(spyFactory.wrapDriver(edge));
 
         PowerMockito.when(WebDriverManager.getInstance(spyReflectedDriver.type())).thenReturn(browserManager);
         doNothing().when(browserManager).setup();
-        doReturn(spyReflectedDriver).when(spyFactory).wrapDriver(chrome);
-        doReturn(on(driver)).when(spyReflectedDriver).create(chrome.configuration(config));
+        doReturn(spyReflectedDriver).when(spyFactory).wrapDriver(edge);
+        doReturn(on(driver)).when(spyReflectedDriver).create(edge.configuration(config));
 
-        assertThat(spyFactory.createDriver(chrome, config)).isInstanceOf(ChromeDriver.class);
+        assertThat(spyFactory.createDriver(edge, config)).isInstanceOf(EdgeDriver.class);
     }
 
     @Test
     public void shouldThrowHiddenMalformedURLException() {
         XmlConfig config = new XmlConfig(new HashMap<String, String>() {
             {
-                put("browserName", "firefox");
-                put("platform", "ANY");
+                put(BROWSER_NAME, "firefox");
+                put(PLATFORM, "ANY");
             }
         });
 

@@ -5,7 +5,6 @@
 [![codecov](https://codecov.io/gh/sskorol/webdriver-supplier/branch/master/graph/badge.svg)](https://codecov.io/gh/sskorol/webdriver-supplier)
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/io.github.sskorol/webdriver-supplier/badge.svg?style=flat)](https://maven-badges.herokuapp.com/maven-central/io.github.sskorol/webdriver-supplier)
 [![Bintray](https://api.bintray.com/packages/sskorol/webdriver-supplier/webdriver-supplier/images/download.svg)](https://bintray.com/sskorol/webdriver-supplier/webdriver-supplier/_latestVersion)
-[![Dependency Status](https://www.versioneye.com/user/projects/59b147e16725bd004a5e3a13/badge.svg?style=flat)](https://www.versioneye.com/user/projects/59b147e16725bd004a5e3a13)
 [![GitHub license](https://img.shields.io/badge/license-Apache%202-blue.svg)](https://goo.gl/9GLmMZ)
 [![Twitter](https://img.shields.io/twitter/url/https/github.com/sskorol/webdriver-supplier.svg?style=social)](https://twitter.com/intent/tweet?text=Check%20new%20WebDriver%20Supplier%20library:&url=https://github.com/sskorol/webdriver-supplier)
 
@@ -36,8 +35,8 @@ repositories {
 }
     
 dependencies {
-    compile('org.testng:testng:6.11',
-            'io.github.sskorol:webdriver-supplier:0.5.0'
+    compile('org.testng:testng:6.12',
+            'io.github.sskorol:webdriver-supplier:0.6.0'
     )
 }
     
@@ -62,7 +61,7 @@ Add the following configuration into **pom.xml**:
     <dependency>
         <groupId>io.github.sskorol</groupId>
         <artifactId>webdriver-supplier</artifactId>
-        <version>0.5.0</version>
+        <version>0.6.0</version>
     </dependency>
 </dependencies>
     
@@ -157,13 +156,19 @@ public String url() {
 }
 ```
 
-Finally, you can provide your own set of capabilities:
+Finally, you can provide your own set of capabilities or options:
 
 ```java
-public Capabilities configuration(final XmlConfig context) {
-    DesiredCapabilities caps = new DesiredCapabilities();
+public MutableCapabilities configuration(final XmlConfig config) {
+    final DesiredCapabilities caps = new DesiredCapabilities();
     //...
     return caps;
+}
+
+public MutableCapabilities configuration(final XmlConfig config) {
+    final ChromeOptions options = new ChromeOptions();
+    //...
+    return merge(config, options);
 }
 ```
 
@@ -218,10 +223,10 @@ browsers in before class, test group or suite configuration.
 Note that in case of custom capabilities usage, it's recommended to merge them with defaults:
 
 ```java
-public Capabilities configuration(final XmlConfig context) {
-    DesiredCapabilities caps = new DesiredCapabilities();
+public MutableCapabilities configuration(final XmlConfig config) {
+    final DesiredCapabilities caps = new DesiredCapabilities();
     //...
-    return defaultConfiguration(context).merge(caps);
+    return merge(config, caps);
 }
 ```
 
@@ -315,8 +320,8 @@ repositories {
 }
     
 dependencies {
-    compile('org.testng:testng:6.11',
-            'io.github.sskorol:webdriver-supplier:0.5.0'
+    compile('org.testng:testng:6.12',
+            'io.github.sskorol:webdriver-supplier:0.6.0'
     )
 }
     
@@ -341,11 +346,11 @@ public class Firefox implements Browser {
         return true;
     }
     
-    public Capabilities configuration(final XmlConfig context) {
+    public MutableCapabilities configuration(final XmlConfig config) {
         final DesiredCapabilities capabilities = DesiredCapabilities.firefox();
         capabilities.setCapability("enableVNC", true);
         capabilities.setCapability("screenResolution", "1280x1024x24");
-        return defaultConfiguration(context).merge(capabilities);
+        return merge(config, capabilities);
     }
 }
 ```

@@ -40,7 +40,7 @@ public abstract class BaseListener {
                 StreamEx.of(webDriverProviders)
                         .findFirst(this::isWebDriverProviderMatching)
                         .map(wdp -> wdp.createDriver(getCurrentBrowser(context), context))
-                        .map(this::toWebDriverMetaData)
+                        .map(d -> Tuple.of(d, new WebDriverWait(d, WD_CONFIG.wdWaitTimeout())))
                         .orElse(null));
     }
 
@@ -60,19 +60,11 @@ public abstract class BaseListener {
     }
 
     private Browser getCurrentBrowser(final XmlConfig config) {
-        return StreamEx.of(getBrowsers())
+        return StreamEx.of(BROWSERS)
                        .filter(b -> b.name().getBrowserName().equals(config.getBrowser()))
                        .findFirst()
                        .orElseThrow(() -> new SkipException("Unable to find implementation class for "
                                + config.getBrowser() + " browser."));
-    }
-
-    private List<Browser> getBrowsers() {
-        return BROWSERS;
-    }
-
-    private Tuple2<WebDriver, WebDriverWait> toWebDriverMetaData(final WebDriver driver) {
-        return Tuple.of(driver, new WebDriverWait(driver, WD_CONFIG.wdWaitTimeout()));
     }
 
     private boolean isWebDriverProviderMatching(final WebDriverProvider provider) {

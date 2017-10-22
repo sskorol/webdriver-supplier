@@ -16,6 +16,8 @@ import static org.joor.Reflect.on;
  */
 public interface WebDriverProvider {
 
+    String WDP_DEFAULT = "wdp_default";
+
     String label();
 
     WebDriver createDriver(Browser browser, XmlConfig config);
