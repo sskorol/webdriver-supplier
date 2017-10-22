@@ -13,8 +13,6 @@ import static io.vavr.API.Match;
 @SuppressWarnings("JavadocType")
 public class WebDriverFactory implements WebDriverProvider {
 
-    public static final String WDP_DEFAULT = "wdp_default";
-
     public String label() {
         return WDP_DEFAULT;
     }

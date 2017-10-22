@@ -29,8 +29,7 @@ public class BeforeMethodListener extends BaseListener implements IInvokedMethod
                     method.getTestMethod().getMethodName())
                     .filter(Optional::isPresent)
                     .map(Optional::get)
-                    .filter(XmlConfig::hasBrowser)
-                    .findFirst()
+                    .findFirst(XmlConfig::hasBrowser)
                     .orElseThrow(() -> new SkipException("Unable to find a valid browser configuration."
                             + " Check if SPI implementation class is provided,"
                             + " and browserName parameter is specified in xml.")));
