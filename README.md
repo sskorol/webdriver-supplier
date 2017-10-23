@@ -36,7 +36,7 @@ repositories {
     
 dependencies {
     compile('org.testng:testng:6.12',
-            'io.github.sskorol:webdriver-supplier:0.6.0'
+            'io.github.sskorol:webdriver-supplier:0.6.2'
     )
 }
     
@@ -61,7 +61,7 @@ Add the following configuration into **pom.xml**:
     <dependency>
         <groupId>io.github.sskorol</groupId>
         <artifactId>webdriver-supplier</artifactId>
-        <version>0.6.0</version>
+        <version>0.6.2</version>
     </dependency>
 </dependencies>
     
@@ -159,13 +159,13 @@ public String url() {
 Finally, you can provide your own set of capabilities or options:
 
 ```java
-public MutableCapabilities configuration(final XmlConfig config) {
+public Capabilities configuration(final XmlConfig config) {
     final DesiredCapabilities caps = new DesiredCapabilities();
     //...
     return caps;
 }
 
-public MutableCapabilities configuration(final XmlConfig config) {
+public Capabilities configuration(final XmlConfig config) {
     final ChromeOptions options = new ChromeOptions();
     //...
     return merge(config, options);
@@ -223,7 +223,7 @@ browsers in before class, test group or suite configuration.
 Note that in case of custom capabilities usage, it's recommended to merge them with defaults:
 
 ```java
-public MutableCapabilities configuration(final XmlConfig config) {
+public Capabilities configuration(final XmlConfig config) {
     final DesiredCapabilities caps = new DesiredCapabilities();
     //...
     return merge(config, caps);
@@ -321,7 +321,7 @@ repositories {
     
 dependencies {
     compile('org.testng:testng:6.12',
-            'io.github.sskorol:webdriver-supplier:0.6.0'
+            'io.github.sskorol:webdriver-supplier:0.6.2'
     )
 }
     
@@ -346,7 +346,7 @@ public class Firefox implements Browser {
         return true;
     }
     
-    public MutableCapabilities configuration(final XmlConfig config) {
+    public Capabilities configuration(final XmlConfig config) {
         final DesiredCapabilities capabilities = DesiredCapabilities.firefox();
         capabilities.setCapability("enableVNC", true);
         capabilities.setCapability("screenResolution", "1280x1024x24");
