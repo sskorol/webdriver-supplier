@@ -1,7 +1,7 @@
 package io.github.sskorol.config;
 
 import io.github.sskorol.core.Browser;
-import org.openqa.selenium.MutableCapabilities;
+import org.openqa.selenium.Capabilities;
 import org.openqa.selenium.edge.EdgeOptions;
 
 public class Edge implements Browser {
@@ -12,7 +12,7 @@ public class Edge implements Browser {
 
 
     @Override
-    public MutableCapabilities configuration(final XmlConfig context) {
+    public Capabilities configuration(final XmlConfig context) {
         return merge(context, new EdgeOptions());
     }
 }
