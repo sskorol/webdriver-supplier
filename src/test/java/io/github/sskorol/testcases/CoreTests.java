@@ -47,8 +47,8 @@ public class CoreTests extends PowerMockTestCase {
 
     @BeforeClass
     public void setUp() {
-        browsers = load(Browser.class, getClass().getClassLoader()).toList();
-        factories = load(WebDriverProvider.class, getClass().getClassLoader()).toList();
+        browsers = load(Browser.class, getClass().getClassLoader());
+        factories = load(WebDriverProvider.class, getClass().getClassLoader());
         defaultFactory = StreamEx.of(factories)
                                  .findFirst(f -> f.label().equals(WDP_DEFAULT))
                                  .orElseThrow(() -> new AssertionError("Unable to get default factory"));

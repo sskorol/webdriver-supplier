@@ -36,7 +36,7 @@ repositories {
     
 dependencies {
     compile('org.testng:testng:6.12',
-            'io.github.sskorol:webdriver-supplier:0.6.2'
+            'io.github.sskorol:webdriver-supplier:0.6.3'
     )
 }
     
@@ -61,7 +61,7 @@ Add the following configuration into **pom.xml**:
     <dependency>
         <groupId>io.github.sskorol</groupId>
         <artifactId>webdriver-supplier</artifactId>
-        <version>0.6.2</version>
+        <version>0.6.3</version>
     </dependency>
 </dependencies>
     
@@ -321,7 +321,7 @@ repositories {
     
 dependencies {
     compile('org.testng:testng:6.12',
-            'io.github.sskorol:webdriver-supplier:0.6.2'
+            'io.github.sskorol:webdriver-supplier:0.6.3'
     )
 }
     
