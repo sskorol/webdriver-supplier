@@ -23,6 +23,6 @@ public class ReflectionTests {
 
     @Test
     public void shouldReturnEmptyCollectionInCaseOfException() {
-        assertThat(ServiceLoaderUtils.load(null, null).toList()).isEmpty();
+        assertThat(ServiceLoaderUtils.load(null, null)).isEmpty();
     }
 }

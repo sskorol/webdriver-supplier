@@ -50,8 +50,8 @@ public abstract class BaseListener {
     }
 
     public void loadServiceProviders() {
-        BROWSERS.addAll(load(Browser.class, getClass().getClassLoader()).toList());
-        WEB_DRIVER_PROVIDERS.addAll(load(WebDriverProvider.class, getClass().getClassLoader()).toList());
+        BROWSERS.addAll(load(Browser.class, getClass().getClassLoader()));
+        WEB_DRIVER_PROVIDERS.addAll(load(WebDriverProvider.class, getClass().getClassLoader()));
     }
 
     public void unloadServiceProviders() {
