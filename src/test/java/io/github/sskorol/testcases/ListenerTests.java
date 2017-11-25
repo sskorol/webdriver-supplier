@@ -57,6 +57,13 @@ public class ListenerTests {
         assertThat(nameListener.getFailedMethodNames()).hasSize(8);
     }
 
+    @Test
+    public void shouldHaveInjectedSessionId() {
+        final InvokedMethodNameListener nameListener = run("src/test/resources/testng1.xml",
+                this::getDefaultListener);
+        assertThat(nameListener.getSessionIds()).hasSize(1);
+    }
+
     private BeforeMethodListener getDefaultListener() {
         return spy(new BeforeMethodListener());
     }
