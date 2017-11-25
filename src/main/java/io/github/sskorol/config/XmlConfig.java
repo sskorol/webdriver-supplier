@@ -5,6 +5,7 @@ import org.openqa.selenium.Platform;
 
 import java.util.Map;
 import java.util.Optional;
+import java.util.UUID;
 
 import static java.util.Optional.ofNullable;
 import static org.openqa.selenium.remote.CapabilityType.BROWSER_NAME;
@@ -17,6 +18,7 @@ import static org.openqa.selenium.remote.CapabilityType.VERSION;
 @RequiredArgsConstructor
 public class XmlConfig {
 
+    public static final String TEST_NAME = "testName";
     private final Map<String, String> parameters;
 
     public String getBrowser() {
@@ -33,6 +35,10 @@ public class XmlConfig {
                 .map(String::toUpperCase)
                 .map(Platform::fromString)
                 .orElseGet(Platform::getCurrent);
+    }
+
+    public String getTestName() {
+        return getValue(TEST_NAME).orElse(UUID.randomUUID().toString());
     }
 
     public boolean hasBrowser() {
