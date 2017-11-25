@@ -36,7 +36,7 @@ repositories {
     
 dependencies {
     compile('org.testng:testng:6.12',
-            'io.github.sskorol:webdriver-supplier:0.6.3'
+            'io.github.sskorol:webdriver-supplier:0.7.0'
     )
 }
     
@@ -61,7 +61,7 @@ Add the following configuration into **pom.xml**:
     <dependency>
         <groupId>io.github.sskorol</groupId>
         <artifactId>webdriver-supplier</artifactId>
-        <version>0.6.3</version>
+        <version>0.7.0</version>
     </dependency>
 </dependencies>
     
@@ -70,7 +70,7 @@ Add the following configuration into **pom.xml**:
         <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-surefire-plugin</artifactId>
-            <version>2.20</version>
+            <version>2.20.1</version>
             <configuration>
                 <properties>
                     <property>
@@ -307,6 +307,28 @@ By default `WebDriverWait` is configured to wait for 10 sec until throwing a tim
 option via **wd.wait.timeout** system property. It could be set either on configuration level in build.gradle / pom.xml, 
 or by putting **wd.properties** with the same record into classpath.
 
+## SessionId access
+
+Sometimes it might be useful to retrieve a current session id from `RemoteWebDriver` instance. For example,
+[Selenoid](http://aerokube.com/selenoid/latest/#_video_recording) uses session id as a default name for video recording.
+
+**webdriver-supplier** automatically injects `sessionId` as a custom TestNG attribute. It allows getting 
+corresponding access in e.g. `afterInvocation` event listener.
+
+```java
+@Slf4j
+public class SessionListener implements IInvokedMethodListener {
+    //...
+            
+    @Override
+    public void afterInvocation(final IInvokedMethod method, final ITestResult testResult) {
+        if (method.isTestMethod()) {
+            log.info("Session ID = {}", testResult.getAttribute("sessionId"));
+        }
+    }
+}
+```
+
 ## Full example
 
 To establish connection with [Selenoid](http://aerokube.com/selenoid/latest) hub and Firefox node containers 
@@ -321,7 +343,7 @@ repositories {
     
 dependencies {
     compile('org.testng:testng:6.12',
-            'io.github.sskorol:webdriver-supplier:0.6.3'
+            'io.github.sskorol:webdriver-supplier:0.7.0'
     )
 }
     
@@ -333,13 +355,13 @@ test {
 }
 ```
 
-##### Firefox.java
+##### Chrome.java
 
 ```java
-public class Firefox implements Browser {
+public class Chrome implements Browser {
     
     public Name name() {
-        return Name.Firefox;
+        return Name.Chrome;
     }
     
     public boolean isRemote() {
@@ -347,10 +369,10 @@ public class Firefox implements Browser {
     }
     
     public Capabilities configuration(final XmlConfig config) {
-        final DesiredCapabilities capabilities = DesiredCapabilities.firefox();
-        capabilities.setCapability("enableVNC", true);
-        capabilities.setCapability("screenResolution", "1280x1024x24");
-        return merge(config, capabilities);
+        final ChromeOptions options = new ChromeOptions();
+        options.setCapability("enableVNC", true);
+        options.setCapability("screenResolution", "1280x1024x24");
+        return merge(config, options);
     }
 }
 ```
@@ -358,7 +380,7 @@ public class Firefox implements Browser {
 ##### io.github.sskorol.core.Browser
 
 ```text
-full.path.to.Firefox
+full.path.to.Chrome
 ```
 
 ##### smoke-suite.xml
@@ -367,9 +389,9 @@ full.path.to.Firefox
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd" >
 <suite name="Smoke suite">
-	<test name="Firefox group">
-		<parameter name="browserName" value="firefox"/>
-		<parameter name="platform" value="ANY"/>
+	<test name="Chrome group">
+		<parameter name="browserName" value="chrome"/>
+		<parameter name="platform" value="LINUX"/>
 		<classes>
 			<class name="path.to.your.testcases.SmokeTests"/>
 		</classes>

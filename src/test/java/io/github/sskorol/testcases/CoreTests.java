@@ -150,8 +150,7 @@ public class CoreTests extends PowerMockTestCase {
     @Test
     public void shouldCreateDriverFactories() {
         assertThat(factories).hasSize(2);
-        assertThat(StreamEx.of(factories).findFirst(f -> f.label().equals(WDP_DEFAULT)))
-                .isPresent();
+        assertThat(StreamEx.of(factories).anyMatch(f -> f.label().equals(WDP_DEFAULT))).isTrue();
     }
 
     @Test

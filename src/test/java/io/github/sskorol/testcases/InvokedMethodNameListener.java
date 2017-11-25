@@ -11,6 +11,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import static io.vavr.API.*;
+import static java.util.Optional.ofNullable;
 import static org.testng.ITestResult.*;
 
 public class InvokedMethodNameListener implements IInvokedMethodListener, ITestListener {
@@ -24,6 +25,7 @@ public class InvokedMethodNameListener implements IInvokedMethodListener, ITestL
     private final List<String> succeedMethodNames = new CopyOnWriteArrayList<>();
     private final Map<String, ITestResult> results = new ConcurrentHashMap<>();
     private final Map<String, List<Long>> threads = new ConcurrentHashMap<>();
+    private final List<String> sessionIds = new CopyOnWriteArrayList<>();
 
     @Override
     public void beforeInvocation(final IInvokedMethod method, final ITestResult testResult) {
@@ -51,6 +53,11 @@ public class InvokedMethodNameListener implements IInvokedMethodListener, ITestL
                         throw new AssertionError("Unexpected value: " + testResult.getStatus());
                     })
             );
+
+            ofNullable(testResult.getAttribute("sessionId"))
+                    .filter(Objects::nonNull)
+                    .map(Object::toString)
+                    .ifPresent(sessionIds::add);
         }
     }
 
@@ -148,5 +155,9 @@ public class InvokedMethodNameListener implements IInvokedMethodListener, ITestL
 
     public Map<String, List<Long>> getThreads() {
         return threads;
+    }
+
+    public List<String> getSessionIds() {
+        return sessionIds;
     }
 }

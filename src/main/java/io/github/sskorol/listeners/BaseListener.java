@@ -8,7 +8,9 @@ import io.vavr.Tuple2;
 import io.vavr.control.Try;
 import one.util.streamex.StreamEx;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.remote.RemoteWebDriver;
 import org.openqa.selenium.support.ui.WebDriverWait;
+import org.testng.ITestResult;
 import org.testng.SkipException;
 
 import java.util.List;
@@ -34,7 +36,7 @@ public abstract class BaseListener {
         return WEB_DRIVER_PROVIDERS;
     }
 
-    public void setupDriver(final XmlConfig context) {
+    public void setupDriver(final XmlConfig context, final ITestResult testResult) {
         final List<WebDriverProvider> webDriverProviders = getWebDriverProviders();
         DRIVER_CONTAINER.set(
                 StreamEx.of(webDriverProviders)
@@ -42,6 +44,7 @@ public abstract class BaseListener {
                         .map(wdp -> wdp.createDriver(getCurrentBrowser(context), context))
                         .map(d -> Tuple.of(d, new WebDriverWait(d, WD_CONFIG.wdWaitTimeout())))
                         .orElse(null));
+        injectSessionId(testResult);
     }
 
     public void cleanUp() {
@@ -61,8 +64,7 @@ public abstract class BaseListener {
 
     private Browser getCurrentBrowser(final XmlConfig config) {
         return StreamEx.of(BROWSERS)
-                       .filter(b -> b.name().getBrowserName().equals(config.getBrowser()))
-                       .findFirst()
+                       .findFirst(b -> b.name().getBrowserName().equals(config.getBrowser()))
                        .orElseThrow(() -> new SkipException("Unable to find implementation class for "
                                + config.getBrowser() + " browser."));
     }
@@ -71,5 +73,13 @@ public abstract class BaseListener {
         final List<WebDriverProvider> webDriverProviders = getWebDriverProviders();
         return (webDriverProviders.size() == 1 && WDP_DEFAULT.equals(provider.label()))
                 || (webDriverProviders.size() > 1 && !WDP_DEFAULT.equals(provider.label()));
+    }
+
+    private void injectSessionId(final ITestResult testResult) {
+        ofNullable(DRIVER_CONTAINER.get())
+                .map(t -> t._1)
+                .filter(d -> d instanceof RemoteWebDriver)
+                .map(d -> ((RemoteWebDriver) d).getSessionId())
+                .ifPresent(id -> testResult.setAttribute("sessionId", id));
     }
 }

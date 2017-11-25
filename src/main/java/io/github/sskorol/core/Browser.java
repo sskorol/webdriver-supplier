@@ -48,7 +48,6 @@ public interface Browser {
         return defaultConfiguration(config);
     }
 
-    @SuppressWarnings("unchecked")
     default <T extends Capabilities> Capabilities merge(final XmlConfig config, final T options) {
         return options.merge(defaultConfiguration(config));
     }
