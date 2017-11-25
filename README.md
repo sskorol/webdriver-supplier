@@ -331,7 +331,7 @@ public class SessionListener implements IInvokedMethodListener {
 
 ## Full example
 
-To establish connection with [Selenoid](http://aerokube.com/selenoid/latest) hub and Chrome node containers 
+To establish connection with [Selenoid](http://aerokube.com/selenoid/latest) hub and Firefox node containers 
 raised on localhost, you can use the following configuration:
 
 ##### build.gradle
