@@ -10,7 +10,11 @@ import java.util.Map;
 import java.util.Optional;
 
 import static io.github.sskorol.config.WebDriverConfig.WD_CONFIG;
+import static io.github.sskorol.config.XmlConfig.TEST_NAME;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.openqa.selenium.remote.CapabilityType.BROWSER_NAME;
+import static org.openqa.selenium.remote.CapabilityType.PLATFORM;
+import static org.openqa.selenium.remote.CapabilityType.VERSION;
 
 public class ConfigTests {
 
@@ -29,9 +33,9 @@ public class ConfigTests {
     @Test
     public void shouldWrapMainXmlParameters() {
         final Map<String, String> parameters = new HashMap<>();
-        parameters.put("browserName", "chrome");
-        parameters.put("version", "60.0");
-        parameters.put("platform", "WINDOWS");
+        parameters.put(BROWSER_NAME, "chrome");
+        parameters.put(VERSION, "60.0");
+        parameters.put(PLATFORM, "WINDOWS");
 
         final XmlConfig config = new XmlConfig(parameters);
         assertThat(config.hasBrowser()).isTrue();
@@ -42,9 +46,9 @@ public class ConfigTests {
     @Test
     public void shouldProvideBrowserConfiguration() {
         final Map<String, String> parameters = new HashMap<>();
-        parameters.put("browserName", "firefox");
-        parameters.put("version", "55.0");
-        parameters.put("platform", "linux");
+        parameters.put(BROWSER_NAME, "firefox");
+        parameters.put(VERSION, "55.0");
+        parameters.put(PLATFORM, "linux");
 
         final XmlConfig config = new XmlConfig(parameters);
         assertThat(config).extracting(XmlConfig::getBrowser).containsExactly("firefox");
@@ -55,7 +59,7 @@ public class ConfigTests {
     @Test(expectedExceptions = WebDriverException.class)
     public void shouldThrowAnExceptionOnIllegalPlatform() {
         final Map<String, String> parameters = new HashMap<>();
-        parameters.put("platform", "os");
+        parameters.put(PLATFORM, "os");
         new XmlConfig(parameters).getPlatform();
     }
 
@@ -84,5 +88,22 @@ public class ConfigTests {
 
         assertThat(config.hasValue("key")).isTrue();
         assertThat(config).extracting(c -> c.getValue("key")).containsExactly(Optional.of("value"));
+    }
+
+    @Test
+    public void shouldProvideValidTestName() {
+        final String testName = "shouldProvideValidTestName";
+        final Map<String, String> parameters = new HashMap<>();
+        parameters.put(TEST_NAME, testName);
+        final XmlConfig config = new XmlConfig(parameters);
+
+        assertThat(config)
+                .extracting(XmlConfig::getTestName)
+                .containsExactly(testName);
+    }
+
+    @Test
+    public void shouldProvideRandomTestNameOnMissingParameter() {
+        assertThat(new XmlConfig(new HashMap<>()).getTestName()).isNotBlank();
     }
 }

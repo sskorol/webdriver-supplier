@@ -36,7 +36,7 @@ repositories {
     
 dependencies {
     compile('org.testng:testng:6.12',
-            'io.github.sskorol:webdriver-supplier:0.7.0'
+            'io.github.sskorol:webdriver-supplier:0.7.1'
     )
 }
     
@@ -61,7 +61,7 @@ Add the following configuration into **pom.xml**:
     <dependency>
         <groupId>io.github.sskorol</groupId>
         <artifactId>webdriver-supplier</artifactId>
-        <version>0.7.0</version>
+        <version>0.7.1</version>
     </dependency>
 </dependencies>
     
@@ -173,7 +173,7 @@ public Capabilities configuration(final XmlConfig config) {
 ```
 
 ```XmlConfig``` is a wrapper for TestNG suite. It gives an access to common browser configuration defined as parameters: 
-**browserName**, **version** and **platform**.
+**browserName**, **version** and **platform**. Besides that, you can also retrieve current test name. 
 
 Note that you have to provide at least browser name on any of the following levels:
 
@@ -343,7 +343,7 @@ repositories {
     
 dependencies {
     compile('org.testng:testng:6.12',
-            'io.github.sskorol:webdriver-supplier:0.7.0'
+            'io.github.sskorol:webdriver-supplier:0.7.1'
     )
 }
     
@@ -355,13 +355,13 @@ test {
 }
 ```
 
-##### Chrome.java
+##### Firefox.java
 
 ```java
-public class Chrome implements Browser {
+public class Firefox implements Browser {
     
     public Name name() {
-        return Name.Chrome;
+        return Name.Firefox;
     }
     
     public boolean isRemote() {
@@ -369,8 +369,10 @@ public class Chrome implements Browser {
     }
     
     public Capabilities configuration(final XmlConfig config) {
-        final ChromeOptions options = new ChromeOptions();
+        final FirefoxOptions options = new FirefoxOptions();
         options.setCapability("enableVNC", true);
+        options.setCapability("enableVideo", true);
+        options.setCapability("name", config.getTestName());
         options.setCapability("screenResolution", "1280x1024x24");
         return merge(config, options);
     }
@@ -380,7 +382,7 @@ public class Chrome implements Browser {
 ##### io.github.sskorol.core.Browser
 
 ```text
-full.path.to.Chrome
+full.path.to.Firefox
 ```
 
 ##### smoke-suite.xml
@@ -390,7 +392,7 @@ full.path.to.Chrome
 <!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd" >
 <suite name="Smoke suite">
 	<test name="Chrome group">
-		<parameter name="browserName" value="chrome"/>
+		<parameter name="browserName" value="firefox"/>
 		<parameter name="platform" value="LINUX"/>
 		<classes>
 			<class name="path.to.your.testcases.SmokeTests"/>

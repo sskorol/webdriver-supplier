@@ -28,6 +28,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static io.github.sskorol.config.XmlConfig.TEST_NAME;
 import static io.github.sskorol.core.WebDriverFactory.WDP_DEFAULT;
 import static io.github.sskorol.utils.ServiceLoaderUtils.load;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -159,6 +160,7 @@ public class CoreTests extends PowerMockTestCase {
             {
                 put(BROWSER_NAME, "firefox");
                 put(PLATFORM, "ANY");
+                put(TEST_NAME, "shouldCreateRemoteDriverInstance");
             }
         });
 

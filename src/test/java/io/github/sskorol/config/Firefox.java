@@ -19,6 +19,7 @@ public class Firefox implements Browser {
     public Capabilities configuration(final XmlConfig config) {
         DesiredCapabilities capabilities = DesiredCapabilities.firefox();
         capabilities.setCapability("enableVNC", true);
+        capabilities.setCapability("name", config.getTestName());
         capabilities.setCapability("screenResolution", "1280x1024x24");
         return merge(config, capabilities);
     }
