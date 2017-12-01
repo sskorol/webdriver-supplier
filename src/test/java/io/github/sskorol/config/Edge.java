@@ -10,7 +10,6 @@ public class Edge implements Browser {
         return Name.Edge;
     }
 
-
     @Override
     public Capabilities configuration(final XmlConfig context) {
         return merge(context, new EdgeOptions());

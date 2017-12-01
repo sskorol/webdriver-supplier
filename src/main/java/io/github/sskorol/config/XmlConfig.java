@@ -8,9 +8,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 import static java.util.Optional.ofNullable;
-import static org.openqa.selenium.remote.CapabilityType.BROWSER_NAME;
-import static org.openqa.selenium.remote.CapabilityType.PLATFORM;
-import static org.openqa.selenium.remote.CapabilityType.VERSION;
+import static org.openqa.selenium.remote.CapabilityType.*;
 
 /**
  * TestNG xml wrapper, which stores parsed browser configuration.
@@ -31,7 +29,7 @@ public class XmlConfig {
     }
 
     public Platform getPlatform() {
-        return getValue(PLATFORM)
+        return getValue(PLATFORM_NAME)
                 .map(String::toUpperCase)
                 .map(Platform::fromString)
                 .orElseGet(Platform::getCurrent);
@@ -46,7 +44,7 @@ public class XmlConfig {
     }
 
     public boolean hasPlatform() {
-        return hasValue(PLATFORM);
+        return hasValue(PLATFORM_NAME);
     }
 
     public boolean hasVersion() {

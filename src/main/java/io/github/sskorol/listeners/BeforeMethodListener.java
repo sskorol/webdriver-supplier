@@ -39,7 +39,7 @@ public class BeforeMethodListener extends BaseListener implements IInvokedMethod
     @Override
     public void afterInvocation(final IInvokedMethod method, final ITestResult testResult) {
         if (method.isTestMethod()) {
-            cleanUp();
+            cleanUp(testResult);
         }
     }
 }

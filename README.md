@@ -35,8 +35,8 @@ repositories {
 }
     
 dependencies {
-    compile('org.testng:testng:6.12',
-            'io.github.sskorol:webdriver-supplier:0.7.1'
+    compile('org.testng:testng:6.13.1',
+            'io.github.sskorol:webdriver-supplier:0.8.0'
     )
 }
     
@@ -56,12 +56,12 @@ Add the following configuration into **pom.xml**:
     <dependency>
         <groupId>org.testng</groupId>
         <artifactId>testng</artifactId>
-        <version>6.11</version>
+        <version>6.13.1</version>
     </dependency>
     <dependency>
         <groupId>io.github.sskorol</groupId>
         <artifactId>webdriver-supplier</artifactId>
-        <version>0.7.1</version>
+        <version>0.8.0</version>
     </dependency>
 </dependencies>
     
@@ -305,7 +305,7 @@ public abstract class BasePage {
 
 By default `WebDriverWait` is configured to wait for 10 sec until throwing a timeout exception. But you can override this 
 option via **wd.wait.timeout** system property. It could be set either on configuration level in build.gradle / pom.xml, 
-or by putting **wd.properties** with the same record into classpath.
+or by putting **webdriver.properties** with the same record into classpath.
 
 ## SessionId access
 
@@ -329,6 +329,38 @@ public class SessionListener implements IInvokedMethodListener {
 }
 ```
 
+## Taking screenshots
+
+Screenshots could be enabled either via boolean **wd.take.screenshot** system property or by putting **webdriver.properties** 
+with the same record into classpath.
+
+For getting access to screenshots' content, it's required to implement the following SPI:
+
+```java
+public class Screenshooter implements ScreenshotConsumer {
+        
+    @Override
+    public void handle(final byte[] screenshot, final ITestResult testResult) {
+        if (nonNull(screenshot) && testResult.getStatus() == FAILURE) {
+            // attach screenshot
+        }
+    }
+}
+
+```
+
+Similar to `Browser` SPI, it should be added into **META-INF/services/io.github.sskorol.core.ScreenshotConsumer**.
+
+## WebDriver properties
+
+**webdriver.properties** file, put into classpath, allows defining or overriding the following settings:
+
+```text
+wd.wait.timeout = 10 (in sec)
+wd.screen.resolution = max (accepts WxH format, e.g. 1280x768)
+wd.take.screenshot = false
+```   
+
 ## Full example
 
 To establish connection with [Selenoid](http://aerokube.com/selenoid/latest) hub and Firefox node containers 
@@ -342,8 +374,8 @@ repositories {
 }
     
 dependencies {
-    compile('org.testng:testng:6.12',
-            'io.github.sskorol:webdriver-supplier:0.7.1'
+    compile('org.testng:testng:6.13.1',
+            'io.github.sskorol:webdriver-supplier:0.8.0'
     )
 }
     
@@ -391,7 +423,7 @@ full.path.to.Firefox
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd" >
 <suite name="Smoke suite">
-	<test name="Chrome group">
+	<test name="Firefox group">
 		<parameter name="browserName" value="firefox"/>
 		<parameter name="platform" value="LINUX"/>
 		<classes>

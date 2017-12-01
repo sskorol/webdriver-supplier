@@ -12,7 +12,7 @@
 			<class name="io.github.sskorol.testcases.FactoryTests2">
 				<methods>
 					<parameter name="browserName" value="firefox"/>
-					<parameter name="platform" value="ANY"/>
+					<parameter name="platformName" value="ANY"/>
 					<include name="test5"/>
 				</methods>
 			</class>

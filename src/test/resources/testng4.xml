@@ -4,7 +4,7 @@
 	<test name="Test block 7">
 		<parameter name="browserName" value="firefox"/>
 		<parameter name="version" value="0.2.5"/>
-		<parameter name="platform" value="LINUX"/>
+		<parameter name="platformName" value="LINUX"/>
 		<classes>
 			<class name="io.github.sskorol.testcases.FactoryTests4"/>
 		</classes>
@@ -12,7 +12,7 @@
 	<test name="Test block 8">
 		<parameter name="browserName" value="edge"/>
 		<parameter name="version" value="2.3.1"/>
-		<parameter name="platform" value="WINDOWS"/>
+		<parameter name="platformName" value="WINDOWS"/>
 		<classes>
 			<class name="io.github.sskorol.testcases.FactoryTests4"/>
 		</classes>

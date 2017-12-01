@@ -25,7 +25,7 @@ public class ListenerTests {
     public void shouldCallDefaultListenerWithMockProvider() {
         final InvokedMethodNameListener nameListener = run("src/test/resources/testng1.xml",
                 this::getDefaultListener);
-        assertThat(nameListener.getSkippedMethodNames()).hasSize(2);
+        assertThat(nameListener.getFailedMethodNames()).hasSize(2);
         assertThat(nameListener.getSucceedMethodNames()).hasSize(1);
     }
 
