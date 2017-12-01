@@ -8,7 +8,7 @@ import org.aeonbits.owner.Reloadable;
  * WebDriver configuration file. Wait timeout could be overridden by system property or custom wd.properties file.
  */
 @Config.LoadPolicy(Config.LoadType.MERGE)
-@Config.Sources("classpath:wd.properties")
+@Config.Sources("classpath:webdriver.properties")
 public interface WebDriverConfig extends Config, Reloadable {
 
     WebDriverConfig WD_CONFIG = ConfigFactory.create(WebDriverConfig.class, System.getenv(), System.getProperties());
@@ -16,4 +16,12 @@ public interface WebDriverConfig extends Config, Reloadable {
     @Key("wd.wait.timeout")
     @DefaultValue("10")
     long wdWaitTimeout();
+
+    @Key("wd.screen.resolution")
+    @DefaultValue("max")
+    String screenResolution();
+
+    @Key("wd.take.screenshot")
+    @DefaultValue("false")
+    boolean takeScreenshot();
 }

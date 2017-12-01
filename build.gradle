@@ -1,6 +1,6 @@
 plugins {
-    id "ru.vyarus.quality" version "2.4.0"
-    id "com.jfrog.bintray" version "1.8.0"
+    id 'ru.vyarus.quality' version '2.4.0'
+    id 'com.jfrog.bintray' version '1.8.0'
     id 'net.researchgate.release' version '2.6.0'
     id 'com.github.ben-manes.versions' version '0.17.0'
 }
@@ -21,21 +21,20 @@ apply from: "${gradleScriptDir}/release.gradle"
 apply from: "${gradleScriptDir}/maven-publish.gradle"
 
 sourceCompatibility = JavaVersion.VERSION_1_8
-targetCompatibility = JavaVersion.VERSION_1_8
 
 repositories {
     jcenter()
 }
 
 dependencies {
-    compile('org.testng:testng:6.12',
+    compile('org.testng:testng:6.13.1',
             'org.jooq:joor:0.9.6',
             'one.util:streamex:0.6.6',
             'org.projectlombok:lombok:1.16.18',
             'io.vavr:vavr:0.9.2',
             'org.slf4j:slf4j-simple:1.8.0-beta0',
-            'org.seleniumhq.selenium:selenium-java:3.7.1',
-            'io.github.bonigarcia:webdrivermanager:1.7.2',
+            'org.seleniumhq.selenium:selenium-java:3.8.0',
+            'io.github.bonigarcia:webdrivermanager:2.0.0',
             'org.aeonbits.owner:owner-java8:1.0.9'
     )
     testCompile('org.assertj:assertj-core:3.8.0',

@@ -13,9 +13,7 @@ import static io.github.sskorol.config.XmlConfig.TEST_NAME;
 import static java.util.Collections.unmodifiableMap;
 import static java.util.Optional.ofNullable;
 import static org.joor.Reflect.on;
-import static org.openqa.selenium.remote.CapabilityType.BROWSER_NAME;
-import static org.openqa.selenium.remote.CapabilityType.PLATFORM;
-import static org.openqa.selenium.remote.CapabilityType.VERSION;
+import static org.openqa.selenium.remote.CapabilityType.*;
 
 @SuppressWarnings("JavadocType")
 public final class TestNGUtils {
@@ -58,7 +56,7 @@ public final class TestNGUtils {
         final Map<String, String> parameters = new HashMap<>();
         ofNullable(xmlSuite.getParameter(BROWSER_NAME)).ifPresent(val -> parameters.put(BROWSER_NAME, val));
         ofNullable(xmlSuite.getParameter(VERSION)).ifPresent(val -> parameters.put(VERSION, val));
-        ofNullable(xmlSuite.getParameter(PLATFORM)).ifPresent(val -> parameters.put(PLATFORM, val));
+        ofNullable(xmlSuite.getParameter(PLATFORM_NAME)).ifPresent(val -> parameters.put(PLATFORM_NAME, val));
         parameters.putIfAbsent(TEST_NAME, method);
         return Optional.of(new XmlConfig(unmodifiableMap(parameters)));
     }

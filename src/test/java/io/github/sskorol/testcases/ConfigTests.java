@@ -12,9 +12,7 @@ import java.util.Optional;
 import static io.github.sskorol.config.WebDriverConfig.WD_CONFIG;
 import static io.github.sskorol.config.XmlConfig.TEST_NAME;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.openqa.selenium.remote.CapabilityType.BROWSER_NAME;
-import static org.openqa.selenium.remote.CapabilityType.PLATFORM;
-import static org.openqa.selenium.remote.CapabilityType.VERSION;
+import static org.openqa.selenium.remote.CapabilityType.*;
 
 public class ConfigTests {
 
@@ -31,11 +29,23 @@ public class ConfigTests {
     }
 
     @Test
+    public void defaultResolutionShouldBeAbsent() {
+        assertThat(WD_CONFIG.screenResolution()).isEqualTo("max");
+    }
+
+    @Test
+    public void defaultResolutionShouldBeReloadable() {
+        System.setProperty("wd.screen.resolution", "1280x1024x24");
+        WD_CONFIG.reload();
+        assertThat(WD_CONFIG.screenResolution()).isEqualTo("1280x1024x24");
+    }
+
+    @Test
     public void shouldWrapMainXmlParameters() {
         final Map<String, String> parameters = new HashMap<>();
         parameters.put(BROWSER_NAME, "chrome");
         parameters.put(VERSION, "60.0");
-        parameters.put(PLATFORM, "WINDOWS");
+        parameters.put(PLATFORM_NAME, "WINDOWS");
 
         final XmlConfig config = new XmlConfig(parameters);
         assertThat(config.hasBrowser()).isTrue();
@@ -48,7 +58,7 @@ public class ConfigTests {
         final Map<String, String> parameters = new HashMap<>();
         parameters.put(BROWSER_NAME, "firefox");
         parameters.put(VERSION, "55.0");
-        parameters.put(PLATFORM, "linux");
+        parameters.put(PLATFORM_NAME, "linux");
 
         final XmlConfig config = new XmlConfig(parameters);
         assertThat(config).extracting(XmlConfig::getBrowser).containsExactly("firefox");
@@ -59,7 +69,7 @@ public class ConfigTests {
     @Test(expectedExceptions = WebDriverException.class)
     public void shouldThrowAnExceptionOnIllegalPlatform() {
         final Map<String, String> parameters = new HashMap<>();
-        parameters.put(PLATFORM, "os");
+        parameters.put(PLATFORM_NAME, "os");
         new XmlConfig(parameters).getPlatform();
     }
 

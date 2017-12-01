@@ -9,7 +9,7 @@
 					<include name="test17">
 						<parameter name="browserName" value="edge"/>
 						<parameter name="version" value="41.2.3"/>
-						<parameter name="platform" value="WINDOWS"/>
+						<parameter name="platformName" value="WINDOWS"/>
 					</include>
 				</methods>
 			</class>
@@ -18,7 +18,7 @@
 					<include name="test16">
 						<parameter name="browserName" value="chrome"/>
 						<parameter name="version" value="54.0.5"/>
-						<parameter name="platform" value="MAC"/>
+						<parameter name="platformName" value="MAC"/>
 					</include>
 				</methods>
 			</class>
@@ -31,7 +31,7 @@
 					<include name="test18">
 						<parameter name="browserName" value="chrome"/>
 						<parameter name="version" value="20.20.20"/>
-						<parameter name="platform" value="LINUX"/>
+						<parameter name="platformName" value="LINUX"/>
 					</include>
 				</methods>
 			</class>
@@ -40,7 +40,7 @@
 					<include name="test15">
 						<parameter name="browserName" value="ie"/>
 						<parameter name="version" value="11.256.2"/>
-						<parameter name="platform" value="WINDOWS"/>
+						<parameter name="platformName" value="WINDOWS"/>
 					</include>
 				</methods>
 			</class>

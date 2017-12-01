@@ -6,9 +6,9 @@ import org.joor.Reflect;
 import org.openqa.selenium.WebDriver;
 import org.testng.SkipException;
 
-import static io.vavr.API.$;
-import static io.vavr.API.Case;
-import static io.vavr.API.Match;
+import static io.github.sskorol.config.WebDriverConfig.WD_CONFIG;
+import static io.github.sskorol.utils.StringUtils.toDimention;
+import static io.vavr.API.*;
 
 @SuppressWarnings("JavadocType")
 public class WebDriverFactory implements WebDriverProvider {
@@ -22,9 +22,17 @@ public class WebDriverFactory implements WebDriverProvider {
         return Try.of(() -> Match(browser).of(
                 Case($(Browser::isRemote), () -> createRemote(driver, browser, config)),
                 Case($(), () -> createLocal(driver, browser, config)))
-        ).map(d -> (WebDriver) d.get()).getOrElseThrow(ex -> {
+        ).map(d -> setCustomScreenResolution(d.get())).getOrElseThrow(ex -> {
             throw new SkipException("Unable to create " + browser.name().getDriverClassName()
                     + " with the following capabilities: " + browser.configuration(config), ex);
         });
+    }
+
+    private WebDriver setCustomScreenResolution(final WebDriver driver) {
+        Match(WD_CONFIG.screenResolution()).of(
+                Case($("max"), () -> run(() -> driver.manage().window().maximize())),
+                Case($(), value -> run(() -> toDimention(value).ifPresent(d -> driver.manage().window().setSize(d))))
+        );
+        return driver;
     }
 }

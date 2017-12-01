@@ -36,7 +36,7 @@ import static org.assertj.core.api.ThrowableAssert.catchThrowable;
 import static org.joor.Reflect.on;
 import static org.mockito.Mockito.*;
 import static org.openqa.selenium.remote.CapabilityType.BROWSER_NAME;
-import static org.openqa.selenium.remote.CapabilityType.PLATFORM;
+import static org.openqa.selenium.remote.CapabilityType.PLATFORM_NAME;
 
 @PrepareForTest(WebDriverManager.class)
 public class CoreTests extends PowerMockTestCase {
@@ -159,7 +159,7 @@ public class CoreTests extends PowerMockTestCase {
         XmlConfig config = new XmlConfig(new HashMap<String, String>() {
             {
                 put(BROWSER_NAME, "firefox");
-                put(PLATFORM, "ANY");
+                put(PLATFORM_NAME, "ANY");
                 put(TEST_NAME, "shouldCreateRemoteDriverInstance");
             }
         });
@@ -175,7 +175,7 @@ public class CoreTests extends PowerMockTestCase {
     }
 
     @Test
-    public void shouldCreateLocalDriverInstance() throws Exception {
+    public void shouldCreateLocalDriverInstance() {
         Browser edge = StreamEx.of(browsers)
                                  .findFirst(f -> f.name() == Browser.Name.Edge)
                                  .orElseThrow(() -> new AssertionError(
@@ -206,7 +206,7 @@ public class CoreTests extends PowerMockTestCase {
         XmlConfig config = new XmlConfig(new HashMap<String, String>() {
             {
                 put(BROWSER_NAME, "firefox");
-                put(PLATFORM, "ANY");
+                put(PLATFORM_NAME, "ANY");
             }
         });
 
