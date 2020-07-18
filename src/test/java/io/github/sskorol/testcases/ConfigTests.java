@@ -61,9 +61,9 @@ public class ConfigTests {
         parameters.put(PLATFORM_NAME, "linux");
 
         final XmlConfig config = new XmlConfig(parameters);
-        assertThat(config).extracting(XmlConfig::getBrowser).containsExactly("firefox");
-        assertThat(config).extracting(XmlConfig::getVersion).containsExactly("55.0");
-        assertThat(config).extracting(XmlConfig::getPlatform).containsExactly(Platform.LINUX);
+        assertThat(config).extracting(XmlConfig::getBrowser).isEqualTo("firefox");
+        assertThat(config).extracting(XmlConfig::getVersion).isEqualTo("55.0");
+        assertThat(config).extracting(XmlConfig::getPlatform).isEqualTo(Platform.LINUX);
     }
 
     @Test(expectedExceptions = WebDriverException.class)
@@ -82,7 +82,7 @@ public class ConfigTests {
     public void shouldReplaceMissingPlatformWithRealOne() {
         assertThat(new XmlConfig(new HashMap<>()))
                 .extracting(XmlConfig::getPlatform)
-                .containsExactly(Platform.getCurrent());
+                .isEqualTo(Platform.getCurrent());
     }
 
     @Test
@@ -97,7 +97,9 @@ public class ConfigTests {
         final XmlConfig config = new XmlConfig(parameters);
 
         assertThat(config.hasValue("key")).isTrue();
-        assertThat(config).extracting(c -> c.getValue("key")).containsExactly(Optional.of("value"));
+        assertThat(config)
+                .extracting(c -> c.getValue("key"))
+                .isEqualTo(Optional.of("value"));
     }
 
     @Test
@@ -109,7 +111,7 @@ public class ConfigTests {
 
         assertThat(config)
                 .extracting(XmlConfig::getTestName)
-                .containsExactly(testName);
+                .isEqualTo(testName);
     }
 
     @Test

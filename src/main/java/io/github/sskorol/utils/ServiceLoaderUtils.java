@@ -1,15 +1,13 @@
 package io.github.sskorol.utils;
 
 import io.vavr.control.Try;
-import lombok.extern.slf4j.Slf4j;
 import one.util.streamex.StreamEx;
 
 import java.util.Collections;
 import java.util.List;
 import java.util.ServiceLoader;
 
-@Slf4j
-@SuppressWarnings("JavadocType")
+@SuppressWarnings("MissingJavadocType")
 public final class ServiceLoaderUtils {
 
     private ServiceLoaderUtils() {

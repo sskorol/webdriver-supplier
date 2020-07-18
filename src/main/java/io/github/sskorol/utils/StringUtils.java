@@ -17,7 +17,7 @@ public final class StringUtils {
         throw new UnsupportedOperationException("Illegal access to private constructor");
     }
 
-    public static Optional<Dimension> toDimention(final String value) {
+    public static Optional<Dimension> toDimension(final String value) {
         return ofNullable(value)
                 .map(val -> StreamEx.of(val.split("x"))
                                     .filter(NumberUtils::isDigits)

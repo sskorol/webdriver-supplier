@@ -1,8 +1,8 @@
 plugins {
-    id 'ru.vyarus.quality' version '2.4.0'
-    id 'com.jfrog.bintray' version '1.8.0'
-    id 'net.researchgate.release' version '2.6.0'
-    id 'com.github.ben-manes.versions' version '0.17.0'
+    id 'ru.vyarus.quality' version '4.3.0'
+    id 'com.jfrog.bintray' version '1.8.5'
+    id 'net.researchgate.release' version '2.8.1'
+    id 'com.github.ben-manes.versions' version '0.28.0'
 }
 
 group 'io.github.sskorol'
@@ -12,6 +12,7 @@ description 'WebDriver Supplier library, which helps to effectively manage web b
 ext {
     gradleScriptDir = "${rootProject.projectDir}/gradle"
     projectUrl = "https://github.com/sskorol/webdriver-supplier"
+    lombokVersion = '1.18.12'
 }
 
 apply plugin: 'java'
@@ -27,29 +28,28 @@ repositories {
 }
 
 dependencies {
-    compile('org.testng:testng:6.13.1',
-            'org.jooq:joor:0.9.6',
-            'one.util:streamex:0.6.6',
-            'org.projectlombok:lombok:1.16.18',
-            'io.vavr:vavr:0.9.2',
-            'org.slf4j:slf4j-simple:1.8.0-beta0',
-            'org.seleniumhq.selenium:selenium-java:3.8.0',
-            'io.github.bonigarcia:webdrivermanager:2.0.0',
-            'org.aeonbits.owner:owner-java8:1.0.9'
+    compileOnly("org.projectlombok:lombok:${lombokVersion}")
+    testCompileOnly("org.projectlombok:lombok:${lombokVersion}")
+    annotationProcessor("org.projectlombok:lombok:${lombokVersion}")
+    testAnnotationProcessor("org.projectlombok:lombok:${lombokVersion}")
+    implementation('org.testng:testng:7.2.0',
+            'org.jooq:joor-java-8:0.9.12',
+            'one.util:streamex:0.7.2',
+            'io.vavr:vavr:0.10.3',
+            'org.slf4j:slf4j-simple:1.8.0-beta4',
+            'org.seleniumhq.selenium:selenium-java:3.141.59',
+            'io.github.bonigarcia:webdrivermanager:4.1.0',
+            'org.aeonbits.owner:owner:1.0.12'
     )
-    testCompile('org.assertj:assertj-core:3.8.0',
+    testImplementation('org.assertj:assertj-core:3.16.1',
             'org.mockito:mockito-core:2.12.0',
-            'org.powermock:powermock-api-mockito2:2.0.0-beta.5',
-            'org.powermock:powermock-module-testng:2.0.0-beta.5'
+            'org.powermock:powermock-api-mockito2:2.0.7',
+            'org.powermock:powermock-module-testng:2.0.7'
     )
-}
-
-task wrapper(type: Wrapper) {
-    gradleVersion '4.3.1'
 }
 
 task sourceJar(type: Jar, dependsOn: classes) {
-    classifier = 'sources'
+    getArchiveClassifier().set('sources')
     from sourceSets.main.allJava
 }
 
@@ -58,7 +58,7 @@ tasks.withType(Javadoc) {
 }
 
 task javadocJar(type: Jar, dependsOn: javadoc) {
-    classifier = 'javadoc'
+    getArchiveClassifier().set('javadoc')
     from javadoc.destinationDir
 }
 
@@ -74,11 +74,8 @@ test {
 }
 
 jacocoTestReport {
-    executionData = files("${buildDir}/jacoco/test.exec")
     reports {
         xml.enabled = true
-        xml.destination file("${buildDir}/reports/jacoco/report.xml")
         html.enabled = true
-        html.destination file("${buildDir}/reports/jacocoHtml")
     }
 }

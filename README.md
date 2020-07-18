@@ -35,8 +35,8 @@ repositories {
 }
     
 dependencies {
-    compile('org.testng:testng:6.13.1',
-            'io.github.sskorol:webdriver-supplier:0.8.0'
+    compile('org.testng:testng:7.2.0',
+            'io.github.sskorol:webdriver-supplier:0.9.0'
     )
 }
     
@@ -56,12 +56,12 @@ Add the following configuration into **pom.xml**:
     <dependency>
         <groupId>org.testng</groupId>
         <artifactId>testng</artifactId>
-        <version>6.13.1</version>
+        <version>7.2.0</version>
     </dependency>
     <dependency>
         <groupId>io.github.sskorol</groupId>
         <artifactId>webdriver-supplier</artifactId>
-        <version>0.8.0</version>
+        <version>0.9.0</version>
     </dependency>
 </dependencies>
     
@@ -179,7 +179,7 @@ Note that you have to provide at least browser name on any of the following leve
 
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd" >
+<!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd" >
 <suite name="Suite name">
 	<!-- Suite level parameters -->
 	<parameter name="browserName" value="chrome"/>

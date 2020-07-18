@@ -6,7 +6,6 @@ import one.util.streamex.IntStreamEx;
 import one.util.streamex.StreamEx;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
-import org.testng.ITestNGListener;
 import org.testng.TestNG;
 import org.testng.annotations.Test;
 
@@ -25,7 +24,7 @@ public class ListenerTests {
     public void shouldCallDefaultListenerWithMockProvider() {
         final InvokedMethodNameListener nameListener = run("src/test/resources/testng1.xml",
                 this::getDefaultListener);
-        assertThat(nameListener.getFailedMethodNames()).hasSize(2);
+        assertThat(nameListener.getSkippedMethodNames()).hasSize(2);
         assertThat(nameListener.getSucceedMethodNames()).hasSize(1);
     }
 
@@ -97,8 +96,8 @@ public class ListenerTests {
         final InvokedMethodNameListener nameListener = new InvokedMethodNameListener();
         final BeforeMethodListener spyListener = listenerSupplier.get();
 
-        tng.addListener((ITestNGListener) nameListener);
-        tng.addListener((ITestNGListener) spyListener);
+        tng.addListener(nameListener);
+        tng.addListener(spyListener);
         tng.setTestSuites(singletonList(suitePath));
         tng.run();
 
