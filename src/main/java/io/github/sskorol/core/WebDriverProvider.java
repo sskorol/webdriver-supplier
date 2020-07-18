@@ -9,7 +9,7 @@ import org.openqa.selenium.WebDriver;
 import java.net.MalformedURLException;
 import java.net.URL;
 
-import static org.joor.Reflect.on;
+import static org.joor.Reflect.onClass;
 
 /**
  * Key interface which should be implemented in case of a custom WebDriver factory.
@@ -23,7 +23,7 @@ public interface WebDriverProvider {
     WebDriver createDriver(Browser browser, XmlConfig config);
 
     default Reflect wrapDriver(final Browser browser) {
-        return on((browser.isRemote() ? Browser.Name.Remote : browser.name()).getDriverClassName());
+        return onClass((browser.isRemote() ? Browser.Name.Remote : browser.name()).getDriverClassName());
     }
 
     default Reflect createLocal(final Reflect driver, final Browser browser, final XmlConfig config) {

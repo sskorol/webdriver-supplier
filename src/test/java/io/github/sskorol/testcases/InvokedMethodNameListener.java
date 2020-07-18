@@ -55,7 +55,6 @@ public class InvokedMethodNameListener implements IInvokedMethodListener, ITestL
             );
 
             ofNullable(testResult.getAttribute("sessionId"))
-                    .filter(Objects::nonNull)
                     .map(Object::toString)
                     .ifPresent(sessionIds::add);
         }

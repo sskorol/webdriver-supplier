@@ -24,7 +24,7 @@ import static io.github.sskorol.core.WebDriverFactory.WDP_DEFAULT;
 import static java.util.Optional.ofNullable;
 import static org.openqa.selenium.OutputType.BYTES;
 
-@SuppressWarnings("JavadocType")
+@SuppressWarnings("MissingJavadocType")
 public abstract class BaseListener {
 
     private static final ThreadLocal<Tuple2<WebDriver, WebDriverWait>> DRIVER_CONTAINER = new ThreadLocal<>();

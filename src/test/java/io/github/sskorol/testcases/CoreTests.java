@@ -1,6 +1,5 @@
 package io.github.sskorol.testcases;
 
-import io.github.bonigarcia.wdm.BrowserManager;
 import io.github.bonigarcia.wdm.WebDriverManager;
 import io.github.sskorol.config.XmlConfig;
 import io.github.sskorol.core.Browser;
@@ -125,13 +124,13 @@ public class CoreTests extends PowerMockTestCase {
         assertThat(chrome.url()).isEqualTo("http://localhost:4444/wd/hub");
         assertThat(chrome.defaultConfiguration(config))
                 .extracting(Capabilities::getBrowserName)
-                .containsExactly("chrome");
+                .isEqualTo("chrome");
         assertThat(chrome.defaultConfiguration(config))
                 .extracting(Capabilities::getVersion)
-                .containsExactly("");
+                .isEqualTo("");
         assertThat(chrome.defaultConfiguration(config))
                 .extracting(Capabilities::getPlatform)
-                .containsExactly(Platform.getCurrent());
+                .isEqualTo(Platform.getCurrent());
         assertThat(chrome.configuration(config)).isEqualTo(chrome.defaultConfiguration(config));
     }
 
@@ -188,7 +187,7 @@ public class CoreTests extends PowerMockTestCase {
         });
 
         PowerMockito.mockStatic(WebDriverManager.class);
-        BrowserManager browserManager = mock(BrowserManager.class, RETURNS_DEEP_STUBS);
+        WebDriverManager browserManager = mock(WebDriverManager.class, RETURNS_DEEP_STUBS);
         WebDriver driver = mock(EdgeDriver.class, RETURNS_DEEP_STUBS);
         WebDriverProvider spyFactory = spy(defaultFactory);
         Reflect spyReflectedDriver = spy(spyFactory.wrapDriver(edge));

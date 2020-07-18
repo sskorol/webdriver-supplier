@@ -12,10 +12,10 @@ import java.util.*;
 import static io.github.sskorol.config.XmlConfig.TEST_NAME;
 import static java.util.Collections.unmodifiableMap;
 import static java.util.Optional.ofNullable;
-import static org.joor.Reflect.on;
+import static org.joor.Reflect.onClass;
 import static org.openqa.selenium.remote.CapabilityType.*;
 
-@SuppressWarnings("JavadocType")
+@SuppressWarnings("MissingJavadocType")
 public final class TestNGUtils {
 
     private TestNGUtils() {
@@ -68,6 +68,6 @@ public final class TestNGUtils {
 
     public static XmlConfig mapConfiguration(final Map<String, String> parameters, final String method) {
         parameters.putIfAbsent(TEST_NAME, method);
-        return on(XmlConfig.class).create(parameters).get();
+        return onClass(XmlConfig.class).create(parameters).get();
     }
 }
