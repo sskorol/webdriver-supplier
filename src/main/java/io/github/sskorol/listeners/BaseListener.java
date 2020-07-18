@@ -75,9 +75,9 @@ public abstract class BaseListener {
 
     private Browser getCurrentBrowser(final XmlConfig config) {
         return StreamEx.of(BROWSERS)
-                       .findFirst(b -> b.name().getBrowserName().equals(config.getBrowser()))
-                       .orElseThrow(() -> new SkipException("Unable to find implementation class for "
-                               + config.getBrowser() + " browser."));
+                .findFirst(b -> b.name().getBrowserName().equals(config.getBrowser()))
+                .orElseThrow(() -> new SkipException("Unable to find implementation class for "
+                        + config.getBrowser() + " browser."));
     }
 
     private boolean isWebDriverProviderMatching(final WebDriverProvider provider) {
