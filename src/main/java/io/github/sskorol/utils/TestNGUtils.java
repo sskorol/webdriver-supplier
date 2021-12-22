@@ -55,7 +55,7 @@ public final class TestNGUtils {
     public static Optional<XmlConfig> getSuiteBrowserConfiguration(final XmlSuite xmlSuite, final String method) {
         final Map<String, String> parameters = new HashMap<>();
         ofNullable(xmlSuite.getParameter(BROWSER_NAME)).ifPresent(val -> parameters.put(BROWSER_NAME, val));
-        ofNullable(xmlSuite.getParameter(VERSION)).ifPresent(val -> parameters.put(VERSION, val));
+        ofNullable(xmlSuite.getParameter(BROWSER_VERSION)).ifPresent(val -> parameters.put(BROWSER_VERSION, val));
         ofNullable(xmlSuite.getParameter(PLATFORM_NAME)).ifPresent(val -> parameters.put(PLATFORM_NAME, val));
         parameters.putIfAbsent(TEST_NAME, method);
         return Optional.of(new XmlConfig(unmodifiableMap(parameters)));

@@ -44,7 +44,7 @@ public class ConfigTests {
     public void shouldWrapMainXmlParameters() {
         final Map<String, String> parameters = new HashMap<>();
         parameters.put(BROWSER_NAME, "chrome");
-        parameters.put(VERSION, "60.0");
+        parameters.put(BROWSER_VERSION, "60.0");
         parameters.put(PLATFORM_NAME, "WINDOWS");
 
         final XmlConfig config = new XmlConfig(parameters);
@@ -57,7 +57,7 @@ public class ConfigTests {
     public void shouldProvideBrowserConfiguration() {
         final Map<String, String> parameters = new HashMap<>();
         parameters.put(BROWSER_NAME, "firefox");
-        parameters.put(VERSION, "55.0");
+        parameters.put(BROWSER_VERSION, "55.0");
         parameters.put(PLATFORM_NAME, "linux");
 
         final XmlConfig config = new XmlConfig(parameters);

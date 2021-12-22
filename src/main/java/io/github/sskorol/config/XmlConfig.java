@@ -25,7 +25,7 @@ public class XmlConfig {
     }
 
     public String getVersion() {
-        return getValue(VERSION).orElse("");
+        return getValue(BROWSER_VERSION).orElse("");
     }
 
     public Platform getPlatform() {
@@ -48,7 +48,7 @@ public class XmlConfig {
     }
 
     public boolean hasVersion() {
-        return hasValue(VERSION);
+        return hasValue(BROWSER_VERSION);
     }
 
     public boolean hasValue(final String key) {

@@ -1,30 +1,36 @@
 plugins {
+    id "java-library"
+    id "java"
     id 'ru.vyarus.quality' version '4.3.0'
-    id 'com.jfrog.bintray' version '1.8.5'
-    id 'net.researchgate.release' version '2.8.1'
-    id 'com.github.ben-manes.versions' version '0.28.0'
+    id "jacoco"
+    id "maven-publish"
+    id "signing"
+    id "io.github.gradle-nexus.publish-plugin" version "1.1.0"
+    id "net.researchgate.release" version "2.8.1"
+    id "com.ferranpons.twitterplugin" version "1.1.0"
+    id "com.github.ben-manes.versions" version "0.39.0"
 }
 
 group 'io.github.sskorol'
-version = version
+version = project['version']
 description 'WebDriver Supplier library, which helps to effectively manage web browser sessions.'
 
 ext {
-    gradleScriptDir = "${rootProject.projectDir}/gradle"
+    gradleScriptDir = "${rootProject.projectDir}/gradle".toString()
     projectUrl = "https://github.com/sskorol/webdriver-supplier"
-    lombokVersion = '1.18.12'
+    moduleName = "io.github.sskorol.webdriversupplier"
+    lombokVersion = "1.18.22"
 }
 
 apply plugin: 'java'
 apply plugin: 'jacoco'
-apply from: "${gradleScriptDir}/bintray.gradle"
-apply from: "${gradleScriptDir}/release.gradle"
-apply from: "${gradleScriptDir}/maven-publish.gradle"
 
-sourceCompatibility = JavaVersion.VERSION_1_8
+sourceCompatibility = JavaVersion.VERSION_11
+targetCompatibility = JavaVersion.VERSION_11
 
 repositories {
-    jcenter()
+    mavenCentral()
+    mavenLocal()
 }
 
 dependencies {
@@ -32,51 +38,42 @@ dependencies {
     testCompileOnly("org.projectlombok:lombok:${lombokVersion}")
     annotationProcessor("org.projectlombok:lombok:${lombokVersion}")
     testAnnotationProcessor("org.projectlombok:lombok:${lombokVersion}")
-    implementation('org.testng:testng:7.2.0',
-            'org.jooq:joor-java-8:0.9.12',
-            'one.util:streamex:0.7.2',
-            'io.vavr:vavr:1.0.0-alpha-3',
-            'org.slf4j:slf4j-simple:1.8.0-beta4',
-            'org.seleniumhq.selenium:selenium-java:3.141.59',
-            'io.github.bonigarcia:webdrivermanager:4.1.0',
+    implementation(
+            'org.testng:testng:7.4.0',
+            'org.jooq:joor:0.9.14',
+            'one.util:streamex:0.8.0',
+            'io.vavr:vavr:0.10.4',
+            'org.seleniumhq.selenium:selenium-java:4.1.1',
+            'io.github.bonigarcia:webdrivermanager:5.0.3',
             'org.aeonbits.owner:owner:1.0.12',
-            'com.google.guava:guava:25.1-jre'
+            'org.apache.commons:commons-lang3:3.12.0'
     )
-    testImplementation('org.assertj:assertj-core:3.16.1',
+    testImplementation('org.assertj:assertj-core:3.21.0',
             'org.mockito:mockito-core:2.12.0',
-            'org.powermock:powermock-api-mockito2:2.0.7',
-            'org.powermock:powermock-module-testng:2.0.7'
+            'org.powermock:powermock-api-mockito2:2.0.9',
+            'org.powermock:powermock-module-testng:2.0.9'
     )
 }
 
-task sourceJar(type: Jar, dependsOn: classes) {
-    getArchiveClassifier().set('sources')
-    from sourceSets.main.allJava
+if (project.hasProperty('release')) {
+    apply from: "${gradleScriptDir}/maven-publish.gradle"
 }
 
-tasks.withType(Javadoc) {
-    options.addStringOption('Xdoclint:none', '-quiet')
+jacoco.toolVersion = "0.8.7"
+jacocoTestReport {
+    reports {
+        xml.required = true
+        xml.outputLocation = file("${buildDir}/reports/jacoco/jacoco.xml")
+        html.outputLocation = file("${buildDir}/reports/jacoco")
+    }
 }
 
-task javadocJar(type: Jar, dependsOn: javadoc) {
-    getArchiveClassifier().set('javadoc')
-    from javadoc.destinationDir
-}
-
-artifacts {
-    archives sourceJar
-    archives javadocJar
+tasks.named('wrapper') {
+    gradleVersion = '7.2'
 }
 
 test {
     useTestNG() {
         suites 'src/test/resources/smoke-suite.xml'
-    }
-}
-
-jacocoTestReport {
-    reports {
-        xml.enabled = true
-        html.enabled = true
     }
 }

@@ -126,10 +126,10 @@ public class CoreTests extends PowerMockTestCase {
                 .extracting(Capabilities::getBrowserName)
                 .isEqualTo("chrome");
         assertThat(chrome.defaultConfiguration(config))
-                .extracting(Capabilities::getVersion)
+                .extracting(Capabilities::getBrowserVersion)
                 .isEqualTo("");
         assertThat(chrome.defaultConfiguration(config))
-                .extracting(Capabilities::getPlatform)
+                .extracting(Capabilities::getPlatformName)
                 .isEqualTo(Platform.getCurrent());
         assertThat(chrome.configuration(config)).isEqualTo(chrome.defaultConfiguration(config));
     }
@@ -155,7 +155,7 @@ public class CoreTests extends PowerMockTestCase {
 
     @Test
     public void shouldCreateRemoteDriverInstance() throws MalformedURLException {
-        XmlConfig config = new XmlConfig(new HashMap<String, String>() {
+        XmlConfig config = new XmlConfig(new HashMap<>() {
             {
                 put(BROWSER_NAME, "firefox");
                 put(PLATFORM_NAME, "ANY");
@@ -180,7 +180,7 @@ public class CoreTests extends PowerMockTestCase {
                                  .orElseThrow(() -> new AssertionError(
                                          "Unable to get Edge implementation"));
 
-        XmlConfig config = new XmlConfig(new HashMap<String, String>() {
+        XmlConfig config = new XmlConfig(new HashMap<>() {
             {
                 put(BROWSER_NAME, "edge");
             }
@@ -202,7 +202,7 @@ public class CoreTests extends PowerMockTestCase {
 
     @Test
     public void shouldThrowHiddenMalformedURLException() {
-        XmlConfig config = new XmlConfig(new HashMap<String, String>() {
+        XmlConfig config = new XmlConfig(new HashMap<>() {
             {
                 put(BROWSER_NAME, "firefox");
                 put(PLATFORM_NAME, "ANY");

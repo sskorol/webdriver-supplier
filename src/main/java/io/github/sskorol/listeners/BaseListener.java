@@ -15,6 +15,7 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 import org.testng.ITestResult;
 import org.testng.SkipException;
 
+import java.time.Duration;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
@@ -46,7 +47,7 @@ public abstract class BaseListener {
                 StreamEx.of(webDriverProviders)
                         .findFirst(this::isWebDriverProviderMatching)
                         .map(wdp -> wdp.createDriver(getCurrentBrowser(context), context))
-                        .map(d -> Tuple.of(d, new WebDriverWait(d, WD_CONFIG.wdWaitTimeout())))
+                        .map(d -> Tuple.of(d, new WebDriverWait(d, Duration.ofSeconds(WD_CONFIG.wdWaitTimeout()))))
                         .orElse(null));
         injectSessionId(testResult);
     }
