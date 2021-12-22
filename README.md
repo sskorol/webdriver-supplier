@@ -4,7 +4,6 @@
 [![codebeat badge](https://codebeat.co/badges/a0385906-b9a9-4287-b07f-70584e1e0702)](https://codebeat.co/projects/github-com-sskorol-webdriver-supplier-master)
 [![codecov](https://codecov.io/gh/sskorol/webdriver-supplier/branch/master/graph/badge.svg)](https://codecov.io/gh/sskorol/webdriver-supplier)
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/io.github.sskorol/webdriver-supplier/badge.svg?style=flat)](https://maven-badges.herokuapp.com/maven-central/io.github.sskorol/webdriver-supplier)
-[![Bintray](https://api.bintray.com/packages/sskorol/webdriver-supplier/webdriver-supplier/images/download.svg)](https://bintray.com/sskorol/webdriver-supplier/webdriver-supplier/_latestVersion)
 [![GitHub license](https://img.shields.io/badge/license-Apache%202-blue.svg)](https://goo.gl/9GLmMZ)
 [![Twitter](https://img.shields.io/twitter/url/https/github.com/sskorol/webdriver-supplier.svg?style=social)](https://twitter.com/intent/tweet?text=Check%20new%20WebDriver%20Supplier%20library:&url=https://github.com/sskorol/webdriver-supplier)
 
@@ -31,12 +30,13 @@ Add the following configuration into **build.gradle**:
 
 ```groovy
 repositories {
-    jcenter()
+    mavenCentral()
 }
     
 dependencies {
-    compile('org.testng:testng:7.2.0',
-            'io.github.sskorol:webdriver-supplier:0.9.0'
+    compile(
+            'org.testng:testng:7.4.0',
+            'io.github.sskorol:webdriver-supplier:0.9.2'
     )
 }
     
@@ -56,12 +56,12 @@ Add the following configuration into **pom.xml**:
     <dependency>
         <groupId>org.testng</groupId>
         <artifactId>testng</artifactId>
-        <version>7.2.0</version>
+        <version>7.4.0</version>
     </dependency>
     <dependency>
         <groupId>io.github.sskorol</groupId>
         <artifactId>webdriver-supplier</artifactId>
-        <version>0.9.0</version>
+        <version>0.9.2</version>
     </dependency>
 </dependencies>
     
@@ -70,7 +70,7 @@ Add the following configuration into **pom.xml**:
         <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-surefire-plugin</artifactId>
-            <version>2.20.1</version>
+            <version>3.0.0-M5</version>
             <configuration>
                 <properties>
                     <property>
@@ -96,7 +96,7 @@ and close it when test has finished.
 
 ### Selenium
 
-As web browsers are managed by WebDriver API, Selenium 3 is required for proper work. Note that library currently supports 
+As web browsers are managed by WebDriver API, Selenium 4 is required for proper work. Note that library currently supports 
 only the following list of browsers (in both local and remote mode):
 
  - Chrome
@@ -108,7 +108,7 @@ only the following list of browsers (in both local and remote mode):
 
 To reduce an overhead with WebDrivers' binaries downloading and configuration, 
 [webdrivermanager](https://github.com/bonigarcia/webdrivermanager) library was used. 
-Note the it's required only for local tests execution.
+Note that it's required only for local tests execution.
 
 ## Browser configuration
 
@@ -183,28 +183,28 @@ Note that you have to provide at least browser name on any of the following leve
 <suite name="Suite name">
 	<!-- Suite level parameters -->
 	<parameter name="browserName" value="chrome"/>
-	<parameter name="version" value="1.1.0"/>
-	<parameter name="platform" value="MAC"/>
+	<parameter name="browserVersion" value="1.1.0"/>
+	<parameter name="platformName" value="MAC"/>
 		
 	<test name="Test block name">
 		<!-- Test level parameters -->	
 		<parameter name="browserName" value="firefox"/>
-		<parameter name="version" value="1.1.1"/>
-		<parameter name="platform" value="LINUX"/>
+		<parameter name="browserVersion" value="1.1.1"/>
+		<parameter name="platformName" value="LINUX"/>
 		
 		<classes>
 			<class name="path.to.your.TestClass">
 				<methods>
 					<!-- Class level parameters -->
 					<parameter name="browserName" value="ie"/>
-					<parameter name="version" value="1.1.2"/>
-					<parameter name="platform" value="WINDOWS"/>
+					<parameter name="browserVersion" value="1.1.2"/>
+					<parameter name="platformName" value="WINDOWS"/>
 					
 					<include name="methodName">
 						<!-- Method level parameters -->
 						<parameter name="browserName" value="edge"/>
-						<parameter name="version" value="1.1.3"/>
-						<parameter name="platform" value="WINDOWS"/>
+						<parameter name="browserVersion" value="1.1.3"/>
+						<parameter name="platformName" value="WINDOWS"/>
 					</include>
 				</methods>
 			</class>
@@ -216,11 +216,11 @@ Note that you have to provide at least browser name on any of the following leve
 When all the levels are covered, only the lowest one is used. Configuration lookup goes in the following order: 
 methods, classes, tests, suites. If there was no **browserName** parameter found, corresponding test(-s) will be skipped.
 
-Independently from browser's parameters location in xml, new instances will be always raised in **before method** 
+Independently of browser's parameters location in xml, new instances will always be raised in **before method** 
 configuration, and closed when test execution is finished. Assuming deep scaling support, it's not reasonable to open 
 browsers in before class, test group or suite configuration.
  
-Note that in case of custom capabilities usage, it's recommended to merge them with defaults:
+Note that in case of custom capabilities' usage, it's recommended to merge them with defaults:
 
 ```java
 public Capabilities configuration(final XmlConfig config) {
@@ -374,8 +374,8 @@ repositories {
 }
     
 dependencies {
-    compile('org.testng:testng:6.13.1',
-            'io.github.sskorol:webdriver-supplier:0.8.0'
+    compile('org.testng:testng:7.4.0',
+            'io.github.sskorol:webdriver-supplier:0.9.2'
     )
 }
     
@@ -421,11 +421,11 @@ full.path.to.Firefox
 
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd" >
+<!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd" >
 <suite name="Smoke suite">
 	<test name="Firefox group">
 		<parameter name="browserName" value="firefox"/>
-		<parameter name="platform" value="LINUX"/>
+		<parameter name="platformName" value="LINUX"/>
 		<classes>
 			<class name="path.to.your.testcases.SmokeTests"/>
 		</classes>
@@ -470,4 +470,4 @@ That's everything you need for a quick start. Enjoy it!
 
 ## TBD
 
-Separate GitHub project with usage examples.
+- [ ] A separate GitHub project with usage examples.
