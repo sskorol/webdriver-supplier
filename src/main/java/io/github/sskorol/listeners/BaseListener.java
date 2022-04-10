@@ -7,6 +7,7 @@ import io.github.sskorol.config.XmlConfig;
 import io.vavr.Tuple;
 import io.vavr.Tuple2;
 import io.vavr.control.Try;
+import lombok.val;
 import one.util.streamex.StreamEx;
 import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
@@ -25,7 +26,7 @@ import static io.github.sskorol.core.WebDriverFactory.WDP_DEFAULT;
 import static java.util.Optional.ofNullable;
 import static org.openqa.selenium.OutputType.BYTES;
 
-@SuppressWarnings("MissingJavadocType")
+@SuppressWarnings({"MissingJavadocType", "FinalLocalVariable"})
 public abstract class BaseListener {
 
     private static final ThreadLocal<Tuple2<WebDriver, WebDriverWait>> DRIVER_CONTAINER = new ThreadLocal<>();
@@ -43,21 +44,26 @@ public abstract class BaseListener {
 
     public void setupDriver(final XmlConfig context, final ITestResult testResult) {
         final List<WebDriverProvider> webDriverProviders = getWebDriverProviders();
-        DRIVER_CONTAINER.set(
-                StreamEx.of(webDriverProviders)
-                        .findFirst(this::isWebDriverProviderMatching)
-                        .map(wdp -> wdp.createDriver(getCurrentBrowser(context), context))
-                        .map(d -> Tuple.of(d, new WebDriverWait(d, Duration.ofSeconds(WD_CONFIG.wdWaitTimeout()))))
-                        .orElse(null));
+        val driver = StreamEx.of(webDriverProviders)
+            .findFirst(this::isWebDriverProviderMatching)
+            .map(wdp -> wdp.createDriver(getCurrentBrowser(context), context))
+            .map(d -> Tuple.of(d, new WebDriverWait(d, Duration.ofSeconds(WD_CONFIG.wdWaitTimeout()))))
+            .orElse(null);
+
+        if (driver == null) {
+            throw new SkipException("Unable to find a suitable driver for " + context.toString());
+        }
+
+        DRIVER_CONTAINER.set(driver);
         injectSessionId(testResult);
     }
 
     public void cleanUp(final ITestResult testResult) {
         ofNullable(getDriverMetaData())
-                .ifPresent(md -> {
-                    takeScreenshot(md._1, testResult);
-                    Try.run(md._1::quit);
-                });
+            .ifPresent(md -> {
+                takeScreenshot(md._1, testResult);
+                Try.run(md._1::quit);
+            });
         DRIVER_CONTAINER.remove();
     }
 
@@ -76,23 +82,23 @@ public abstract class BaseListener {
 
     private Browser getCurrentBrowser(final XmlConfig config) {
         return StreamEx.of(BROWSERS)
-                .findFirst(b -> b.name().getBrowserName().equals(config.getBrowser()))
-                .orElseThrow(() -> new SkipException("Unable to find implementation class for "
-                        + config.getBrowser() + " browser."));
+            .findFirst(b -> b.name().getBrowserName().equals(config.getBrowser()))
+            .orElseThrow(() -> new SkipException("Unable to find implementation class for "
+                                                 + config.getBrowser() + " browser."));
     }
 
     private boolean isWebDriverProviderMatching(final WebDriverProvider provider) {
         final List<WebDriverProvider> webDriverProviders = getWebDriverProviders();
         return (webDriverProviders.size() == 1 && WDP_DEFAULT.equals(provider.label()))
-                || (webDriverProviders.size() > 1 && !WDP_DEFAULT.equals(provider.label()));
+               || (webDriverProviders.size() > 1 && !WDP_DEFAULT.equals(provider.label()));
     }
 
     private void injectSessionId(final ITestResult testResult) {
         ofNullable(DRIVER_CONTAINER.get())
-                .map(t -> t._1)
-                .filter(d -> d instanceof RemoteWebDriver)
-                .map(d -> ((RemoteWebDriver) d).getSessionId())
-                .ifPresent(id -> testResult.setAttribute("sessionId", id));
+            .map(t -> t._1)
+            .filter(d -> d instanceof RemoteWebDriver)
+            .map(d -> ((RemoteWebDriver) d).getSessionId())
+            .ifPresent(id -> testResult.setAttribute("sessionId", id));
     }
 
     private void takeScreenshot(final WebDriver driver, final ITestResult testResult) {
