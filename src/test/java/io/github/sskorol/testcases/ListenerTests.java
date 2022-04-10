@@ -24,7 +24,7 @@ public class ListenerTests {
     public void shouldCallDefaultListenerWithMockProvider() {
         final InvokedMethodNameListener nameListener = run("src/test/resources/testng1.xml",
                 this::getDefaultListener);
-        assertThat(nameListener.getSkippedMethodNames()).hasSize(2);
+        assertThat(nameListener.getSkippedMethods()).hasSize(2);
         assertThat(nameListener.getSucceedMethodNames()).hasSize(1);
     }
 
@@ -46,14 +46,14 @@ public class ListenerTests {
     public void shouldCallCustomListenerForCustomProvider() {
         final InvokedMethodNameListener nameListener = run("src/test/resources/testng3.xml",
                 () -> getCustomListener(p -> !WDP_DEFAULT.equals(p.label()), 1));
-        assertThat(nameListener.getFailedMethodNames()).hasSize(8);
+        assertThat(nameListener.getSkippedMethods()).hasSize(8);
     }
 
     @Test
     public void shouldCallCustomListenerForDuplicateDefaultProviders() {
         final InvokedMethodNameListener nameListener = run("src/test/resources/testng3.xml",
                 () -> getCustomListener(p -> WDP_DEFAULT.equals(p.label()), 2));
-        assertThat(nameListener.getFailedMethodNames()).hasSize(8);
+        assertThat(nameListener.getSkippedMethods()).hasSize(8);
     }
 
     @Test

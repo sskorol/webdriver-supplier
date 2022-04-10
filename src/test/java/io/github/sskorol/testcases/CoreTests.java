@@ -1,6 +1,7 @@
 package io.github.sskorol.testcases;
 
 import io.github.bonigarcia.wdm.WebDriverManager;
+import io.github.sskorol.config.PowerMockObjectFactory;
 import io.github.sskorol.config.XmlConfig;
 import io.github.sskorol.core.Browser;
 import io.github.sskorol.core.WebDriverProvider;
@@ -15,7 +16,7 @@ import org.openqa.selenium.remote.RemoteWebDriver;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.testng.PowerMockTestCase;
-import org.testng.IObjectFactory;
+import org.testng.ITestObjectFactory;
 import org.testng.SkipException;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.ObjectFactory;
@@ -50,11 +51,11 @@ public class CoreTests extends PowerMockTestCase {
         browsers = load(Browser.class, getClass().getClassLoader());
         factories = load(WebDriverProvider.class, getClass().getClassLoader());
         defaultFactory = StreamEx.of(factories)
-                                 .findFirst(f -> f.label().equals(WDP_DEFAULT))
-                                 .orElseThrow(() -> new AssertionError("Unable to get default factory"));
+            .findFirst(f -> f.label().equals(WDP_DEFAULT))
+            .orElseThrow(() -> new AssertionError("Unable to get default factory"));
         firefox = StreamEx.of(browsers)
-                          .findFirst(f -> f.name() == Browser.Name.Firefox)
-                          .orElseThrow(() -> new AssertionError("Unable to get Firefox implementation"));
+            .findFirst(f -> f.name() == Browser.Name.Firefox)
+            .orElseThrow(() -> new AssertionError("Unable to get Firefox implementation"));
     }
 
     @Test
@@ -65,39 +66,45 @@ public class CoreTests extends PowerMockTestCase {
     @Test
     public void browsersShouldHaveProvidedEnumConstants() {
         assertThat(browsers)
-                .extracting(Browser::name)
-                .containsExactlyInAnyOrder(Browser.Name.Chrome,
-                        Browser.Name.Edge,
-                        Browser.Name.Firefox,
-                        Browser.Name.InternetExplorer);
+            .extracting(Browser::name)
+            .containsExactlyInAnyOrder(
+                Browser.Name.Chrome,
+                Browser.Name.Edge,
+                Browser.Name.Firefox,
+                Browser.Name.InternetExplorer
+            );
     }
 
     @Test
     public void browsersShouldHaveDefaultNames() {
         assertThat(browsers)
-                .extracting(Browser::name)
-                .extracting(Browser.Name::getBrowserName)
-                .containsExactlyInAnyOrder("chrome", "firefox", "edge", "ie");
+            .extracting(Browser::name)
+            .extracting(Browser.Name::getBrowserName)
+            .containsExactlyInAnyOrder("chrome", "firefox", "edge", "ie");
     }
 
     @Test
     public void browsersShouldHaveDefaultDrivers() {
         assertThat(browsers)
-                .extracting(Browser::name)
-                .extracting(Browser.Name::getDriverClassName)
-                .containsExactlyInAnyOrder("org.openqa.selenium.chrome.ChromeDriver",
-                        "org.openqa.selenium.firefox.FirefoxDriver",
-                        "org.openqa.selenium.edge.EdgeDriver",
-                        "org.openqa.selenium.ie.InternetExplorerDriver");
+            .extracting(Browser::name)
+            .extracting(Browser.Name::getDriverClassName)
+            .containsExactlyInAnyOrder(
+                "org.openqa.selenium.chrome.ChromeDriver",
+                "org.openqa.selenium.firefox.FirefoxDriver",
+                "org.openqa.selenium.edge.EdgeDriver",
+                "org.openqa.selenium.ie.InternetExplorerDriver"
+            );
     }
 
     @Test
     public void shouldRetrievePrecededBrowsers() {
-        assertThat(Browser.Name.values()).containsExactly(Browser.Name.Chrome,
-                Browser.Name.Firefox,
-                Browser.Name.InternetExplorer,
-                Browser.Name.Edge,
-                Browser.Name.Remote);
+        assertThat(Browser.Name.values()).containsExactly(
+            Browser.Name.Chrome,
+            Browser.Name.Firefox,
+            Browser.Name.InternetExplorer,
+            Browser.Name.Edge,
+            Browser.Name.Remote
+        );
     }
 
     @Test
@@ -117,20 +124,20 @@ public class CoreTests extends PowerMockTestCase {
 
         final XmlConfig config = new XmlConfig(chromeParameters);
         final Browser chrome = StreamEx.of(browsers)
-                                       .findFirst(b -> b.name() == Browser.Name.Chrome)
-                                       .orElseThrow(() -> new AssertionError("Unable to retrieve Chrome"));
+            .findFirst(b -> b.name() == Browser.Name.Chrome)
+            .orElseThrow(() -> new AssertionError("Unable to retrieve Chrome"));
 
         assertThat(chrome.isRemote()).isFalse();
         assertThat(chrome.url()).isEqualTo("http://localhost:4444/wd/hub");
         assertThat(chrome.defaultConfiguration(config))
-                .extracting(Capabilities::getBrowserName)
-                .isEqualTo("chrome");
+            .extracting(Capabilities::getBrowserName)
+            .isEqualTo("chrome");
         assertThat(chrome.defaultConfiguration(config))
-                .extracting(Capabilities::getBrowserVersion)
-                .isEqualTo("");
+            .extracting(Capabilities::getBrowserVersion)
+            .isEqualTo("");
         assertThat(chrome.defaultConfiguration(config))
-                .extracting(Capabilities::getPlatformName)
-                .isEqualTo(Platform.getCurrent());
+            .extracting(Capabilities::getPlatformName)
+            .isEqualTo(Platform.getCurrent());
         assertThat(chrome.configuration(config)).isEqualTo(chrome.defaultConfiguration(config));
     }
 
@@ -141,8 +148,8 @@ public class CoreTests extends PowerMockTestCase {
 
         final XmlConfig config = new XmlConfig(edgeParameters);
         final Browser edge = StreamEx.of(browsers)
-                                       .findFirst(b -> b.name() == Browser.Name.Edge)
-                                       .orElseThrow(() -> new AssertionError("Unable to retrieve Edge"));
+            .findFirst(b -> b.name() == Browser.Name.Edge)
+            .orElseThrow(() -> new AssertionError("Unable to retrieve Edge"));
 
         assertThat(edge.configuration(config)).isEqualTo(edge.merge(config, new EdgeOptions()));
     }
@@ -174,11 +181,12 @@ public class CoreTests extends PowerMockTestCase {
     }
 
     @Test
+    @SuppressWarnings("unchecked")
     public void shouldCreateLocalDriverInstance() {
         Browser edge = StreamEx.of(browsers)
-                                 .findFirst(f -> f.name() == Browser.Name.Edge)
-                                 .orElseThrow(() -> new AssertionError(
-                                         "Unable to get Edge implementation"));
+            .findFirst(f -> f.name() == Browser.Name.Edge)
+            .orElseThrow(() -> new AssertionError(
+                "Unable to get Edge implementation"));
 
         XmlConfig config = new XmlConfig(new HashMap<>() {
             {
@@ -192,7 +200,8 @@ public class CoreTests extends PowerMockTestCase {
         WebDriverProvider spyFactory = spy(defaultFactory);
         Reflect spyReflectedDriver = spy(spyFactory.wrapDriver(edge));
 
-        PowerMockito.when(WebDriverManager.getInstance(spyReflectedDriver.type())).thenReturn(browserManager);
+        PowerMockito.when(WebDriverManager.getInstance((Class<? extends WebDriver>) spyReflectedDriver.type()))
+            .thenReturn(browserManager);
         doNothing().when(browserManager).setup();
         doReturn(spyReflectedDriver).when(spyFactory).wrapDriver(edge);
         doReturn(on(driver)).when(spyReflectedDriver).create(edge.configuration(config));
@@ -213,12 +222,12 @@ public class CoreTests extends PowerMockTestCase {
         doReturn("localhost").when(browser).url();
 
         assertThat(catchThrowable(() -> defaultFactory.createDriver(browser, config)))
-                .isInstanceOf(SkipException.class)
-                .hasStackTraceContaining("java.net.MalformedURLException");
+            .isInstanceOf(SkipException.class)
+            .hasStackTraceContaining("java.net.MalformedURLException");
     }
 
     @ObjectFactory
-    public IObjectFactory getObjectFactory() {
-        return new org.powermock.modules.testng.PowerMockObjectFactory();
+    public ITestObjectFactory getObjectFactory() {
+        return new PowerMockObjectFactory();
     }
 }

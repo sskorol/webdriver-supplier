@@ -36,7 +36,8 @@ public interface WebDriverProvider {
         return driver.create(new URL(browser.url()), browser.configuration(config));
     }
 
+    @SuppressWarnings("unchecked")
     default void setupDriver(final Reflect driver) {
-        WebDriverManager.getInstance(driver.type()).setup();
+        WebDriverManager.getInstance((Class<? extends WebDriver>) driver.type()).setup();
     }
 }

@@ -1,6 +1,7 @@
 package io.github.sskorol.listeners;
 
 import io.github.sskorol.config.XmlConfig;
+import lombok.val;
 import org.testng.*;
 
 import java.util.*;
@@ -10,6 +11,7 @@ import static io.github.sskorol.utils.TestNGUtils.getBrowserConfiguration;
 /**
  * Key listener which should be included on client side. Creates / cleans WebDrivers before/after test invocation.
  */
+@SuppressWarnings("FinalLocalVariable")
 public class BeforeMethodListener extends BaseListener implements IInvokedMethodListener, ISuiteListener {
 
     @Override
@@ -25,14 +27,17 @@ public class BeforeMethodListener extends BaseListener implements IInvokedMethod
     @Override
     public void beforeInvocation(final IInvokedMethod method, final ITestResult testResult) {
         if (method.isTestMethod()) {
-            setupDriver(getBrowserConfiguration(testResult.getTestContext().getCurrentXmlTest(),
-                    method.getTestMethod().getMethodName())
-                    .filter(Optional::isPresent)
-                    .map(Optional::get)
-                    .findFirst(XmlConfig::hasBrowser)
-                    .orElseThrow(() -> new SkipException("Unable to find a valid browser configuration."
-                            + " Check if SPI implementation class is provided,"
-                            + " and browserName parameter is specified in xml.")), testResult);
+            val config = getBrowserConfiguration(
+                testResult.getTestContext().getCurrentXmlTest(),
+                method.getTestMethod().getMethodName()
+            )
+                .filter(Optional::isPresent)
+                .map(Optional::get)
+                .findFirst(XmlConfig::hasBrowser)
+                .orElseThrow(() -> new SkipException("Unable to find a valid browser configuration. Check if SPI "
+                                                     + "implementation class is provided, "
+                                                     + "and browserName parameter is specified in xml."));
+            setupDriver(config, testResult);
         }
     }
 

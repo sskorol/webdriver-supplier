@@ -1,6 +1,7 @@
 package io.github.sskorol.testcases;
 
 import io.github.sskorol.utils.ServiceLoaderUtils;
+import io.github.sskorol.utils.StringUtils;
 import io.github.sskorol.utils.TestNGUtils;
 import org.testng.annotations.Test;
 
@@ -19,6 +20,12 @@ public class ReflectionTests {
     public void shouldThrowAnExceptionOnServiceLoaderUtilsConstructorAccess() {
         assertThatThrownBy(() -> onClass(ServiceLoaderUtils.class).create())
                 .hasStackTraceContaining("java.lang.UnsupportedOperationException: Illegal access to private constructor");
+    }
+
+    @Test
+    public void shouldThrowAnExceptionOnStringUtilsConstructorAccess() {
+        assertThatThrownBy(() -> onClass(StringUtils.class).create())
+            .hasStackTraceContaining("java.lang.UnsupportedOperationException: Illegal access to private constructor");
     }
 
     @Test

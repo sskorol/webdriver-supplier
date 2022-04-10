@@ -1,6 +1,7 @@
 package io.github.sskorol.testcases;
 
 import io.github.sskorol.config.XmlConfig;
+import org.openqa.selenium.Dimension;
 import org.openqa.selenium.Platform;
 import org.openqa.selenium.WebDriverException;
 import org.testng.annotations.Test;
@@ -11,6 +12,7 @@ import java.util.Optional;
 
 import static io.github.sskorol.config.WebDriverConfig.WD_CONFIG;
 import static io.github.sskorol.config.XmlConfig.TEST_NAME;
+import static io.github.sskorol.utils.StringUtils.toDimension;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.openqa.selenium.remote.CapabilityType.*;
 
@@ -41,6 +43,16 @@ public class ConfigTests {
     }
 
     @Test
+    public void shouldConvertToDimension() {
+        assertThat(toDimension("1280x1024x24")).isEqualTo(Optional.of(new Dimension(1280, 1024)));
+    }
+
+    @Test
+    public void shouldFailConvertingToDimension() {
+        assertThat(toDimension("1280")).isEqualTo(Optional.empty());
+    }
+
+    @Test
     public void shouldWrapMainXmlParameters() {
         final Map<String, String> parameters = new HashMap<>();
         parameters.put(BROWSER_NAME, "chrome");
@@ -64,6 +76,46 @@ public class ConfigTests {
         assertThat(config).extracting(XmlConfig::getBrowser).isEqualTo("firefox");
         assertThat(config).extracting(XmlConfig::getVersion).isEqualTo("55.0");
         assertThat(config).extracting(XmlConfig::getPlatform).isEqualTo(Platform.LINUX);
+    }
+
+    @Test
+    public void shouldPrintFullBrowserConfiguration() {
+        final Map<String, String> parameters = new HashMap<>();
+        parameters.put(BROWSER_NAME, "chrome");
+        parameters.put(BROWSER_VERSION, "96.0");
+        parameters.put(PLATFORM_NAME, "linux");
+
+        final XmlConfig config = new XmlConfig(parameters);
+        assertThat(config.toString()).isEqualTo("chrome 96.0 LINUX");
+    }
+
+    @Test
+    public void shouldPrintBrowserConfigurationWithoutVersion() {
+        final Map<String, String> parameters = new HashMap<>();
+        parameters.put(BROWSER_NAME, "chrome");
+        parameters.put(PLATFORM_NAME, "mac");
+
+        final XmlConfig config = new XmlConfig(parameters);
+        assertThat(config.toString()).isEqualTo("chrome MAC");
+    }
+
+    @Test
+    public void shouldPrintBrowserConfigurationWithoutPlatform() {
+        final Map<String, String> parameters = new HashMap<>();
+        parameters.put(BROWSER_NAME, "chrome");
+        parameters.put(BROWSER_VERSION, "99.9");
+
+        final XmlConfig config = new XmlConfig(parameters);
+        assertThat(config.toString()).isEqualTo("chrome 99.9 MAC");
+    }
+
+    @Test
+    public void shouldPrintBrowserConfigurationWithoutVersionAndPlatform() {
+        final Map<String, String> parameters = new HashMap<>();
+        parameters.put(BROWSER_NAME, "chrome");
+
+        final XmlConfig config = new XmlConfig(parameters);
+        assertThat(config.toString()).isEqualTo("chrome MAC");
     }
 
     @Test(expectedExceptions = WebDriverException.class)
