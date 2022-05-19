@@ -32,11 +32,14 @@ Add the following configuration into **build.gradle**:
 repositories {
     mavenCentral()
 }
+
+sourceCompatibility = JavaVersion.VERSION_17
+targetCompatibility = JavaVersion.VERSION_17
     
 dependencies {
     compile(
-            'org.testng:testng:7.5',
-            'io.github.sskorol:webdriver-supplier:0.9.3'
+            'org.testng:testng:7.6.0',
+            'io.github.sskorol:webdriver-supplier:1.0.0'
     )
 }
     
@@ -56,12 +59,12 @@ Add the following configuration into **pom.xml**:
     <dependency>
         <groupId>org.testng</groupId>
         <artifactId>testng</artifactId>
-        <version>7.5</version>
+        <version>7.6.0</version>
     </dependency>
     <dependency>
         <groupId>io.github.sskorol</groupId>
         <artifactId>webdriver-supplier</artifactId>
-        <version>0.9.3</version>
+        <version>1.0.0</version>
     </dependency>
 </dependencies>
     
@@ -69,8 +72,17 @@ Add the following configuration into **pom.xml**:
     <plugins>
         <plugin>
             <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-compiler-plugin</artifactId>
+            <version>3.10.1</version>
+            <configuration>
+                <source>1.8</source>
+                <target>1.8</target>
+            </configuration>
+        </plugin>
+        <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-surefire-plugin</artifactId>
-            <version>3.0.0-M5</version>
+            <version>3.0.0-M6</version>
             <configuration>
                 <properties>
                     <property>
@@ -297,8 +309,9 @@ public abstract class BasePage {
     private final WebDriverWait wait;
         
     public BasePage() {
-        this.driver = getDriverMetaData()._1;
-        this.wait = getDriverMetaData()._2;
+        final WebDriverContainer wdMeta = getDriverMetaData();
+        this.driver = wdMeta.getWebDriver();
+        this.wait = wdMeta.getWebDriverWait();
     }
 }
 ```
@@ -306,6 +319,25 @@ public abstract class BasePage {
 By default `WebDriverWait` is configured to wait for 10 sec until throwing a timeout exception. But you can override this 
 option via **wd.wait.timeout** system property. It could be set either on configuration level in build.gradle / pom.xml, 
 or by putting **webdriver.properties** with the same record into classpath.
+
+## Chrome DevTools Protocol
+
+Since 1.0.0 version `webdriver-supplier` introduces initial CDP support. Basically, your browser class should
+implement `CDP` interface and override the following method to enable this feature:
+
+```java
+public String cdpWebSocketUrl(final String sessionId) {
+    return format("ws://localhost:4444/devtools/%s/page", sessionId);
+}
+```
+
+The above example uses Selenoid to connect to the open websocket within browser's container.
+
+Next, you can access `ChromeDevToolsService` from within `WebDriverContainer`:
+
+```java
+final ChromeDevToolsService cdp = getDriverMetaData().getDevToolsService();
+```
 
 ## SessionId access
 
@@ -370,12 +402,15 @@ raised on localhost, you can use the following configuration:
 
 ```groovy
 repositories {
-    jcenter()
+    mavenCentral()
 }
+
+sourceCompatibility = JavaVersion.VERSION_17
+targetCompatibility = JavaVersion.VERSION_17
     
 dependencies {
-    compile('org.testng:testng:7.4.0',
-            'io.github.sskorol:webdriver-supplier:0.9.2'
+    compile('org.testng:testng:7.6.0',
+            'io.github.sskorol:webdriver-supplier:1.0.0'
     )
 }
     
@@ -387,13 +422,13 @@ test {
 }
 ```
 
-##### Firefox.java
+##### Chrome.java
 
 ```java
-public class Firefox implements Browser {
+public class Chrome implements Browser, CDP {
     
     public Name name() {
-        return Name.Firefox;
+        return Name.Chrome;
     }
     
     public boolean isRemote() {
@@ -401,12 +436,16 @@ public class Firefox implements Browser {
     }
     
     public Capabilities configuration(final XmlConfig config) {
-        final FirefoxOptions options = new FirefoxOptions();
+        final ChromeOptions options = new ChromeOptions();
         options.setCapability("enableVNC", true);
         options.setCapability("enableVideo", true);
         options.setCapability("name", config.getTestName());
         options.setCapability("screenResolution", "1280x1024x24");
         return merge(config, options);
+    }
+
+    public String cdpWebSocketUrl(final String sessionId) {
+        return format("ws://localhost:4444/devtools/%s/page", sessionId);
     }
 }
 ```
@@ -414,7 +453,7 @@ public class Firefox implements Browser {
 ##### io.github.sskorol.core.Browser
 
 ```text
-full.path.to.Firefox
+full.path.to.Chrome
 ```
 
 ##### smoke-suite.xml
@@ -423,8 +462,8 @@ full.path.to.Firefox
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd" >
 <suite name="Smoke suite">
-	<test name="Firefox group">
-		<parameter name="browserName" value="firefox"/>
+	<test name="Chrome group">
+		<parameter name="browserName" value="Chrome"/>
 		<parameter name="platformName" value="LINUX"/>
 		<classes>
 			<class name="path.to.your.testcases.SmokeTests"/>
@@ -442,10 +481,13 @@ public abstract class BasePage {
         
     private final WebDriver driver;
     private final WebDriverWait wait;
+    private final ChromeDevToolsService cdp;
         
     public BasePage() {
-        this.driver = getDriverMetaData()._1;
-        this.wait = getDriverMetaData()._2;
+        final WebDriverContainer wdMeta = getDriverMetaData();
+        this.driver = wdMeta.getWebDriver();
+        this.wait = wdMeta.getWebDriverWait();
+        this.cdp = wdMeta.getDevToolsService();
     }
     
     protected void navigateTo(final String url) {
