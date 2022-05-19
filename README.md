@@ -24,9 +24,33 @@ so that they could concentrate on more high level tasks.
 
 ## Installation
 
-### Gradle
+### Java 11 - Gradle
 
 Add the following configuration into **build.gradle**:
+
+```groovy
+repositories {
+    mavenCentral()
+}
+
+sourceCompatibility = JavaVersion.VERSION_11
+targetCompatibility = JavaVersion.VERSION_11
+    
+dependencies {
+    compile(
+            'org.testng:testng:7.5',
+            'io.github.sskorol:webdriver-supplier:0.9.3'
+    )
+}
+    
+test {
+    useTestNG() {
+        listeners << 'io.github.sskorol.listeners.BeforeMethodListener'
+    }
+}
+```
+
+### Java 17 - Gradle
 
 ```groovy
 repositories {
@@ -50,9 +74,53 @@ test {
 }
 ```
 
-### Maven
+### Java 11 - Maven
 
 Add the following configuration into **pom.xml**:
+
+```xml
+<dependencies>
+    <dependency>
+        <groupId>org.testng</groupId>
+        <artifactId>testng</artifactId>
+        <version>7.5</version>
+    </dependency>
+    <dependency>
+        <groupId>io.github.sskorol</groupId>
+        <artifactId>webdriver-supplier</artifactId>
+        <version>0.9.3</version>
+    </dependency>
+</dependencies>
+    
+<build>
+    <plugins>
+        <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-compiler-plugin</artifactId>
+            <version>3.10.1</version>
+            <configuration>
+                <source>11</source>
+                <target>11</target>
+            </configuration>
+        </plugin>
+        <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-surefire-plugin</artifactId>
+            <version>3.0.0-M6</version>
+            <configuration>
+                <properties>
+                    <property>
+                        <name>listener</name>
+                        <value>io.github.sskorol.listeners.BeforeMethodListener</value>
+                    </property>
+                </properties>
+            </configuration>
+        </plugin>
+    </plugins>
+</build>
+```
+
+### Java 17 - Maven
 
 ```xml
 <dependencies>
@@ -75,8 +143,8 @@ Add the following configuration into **pom.xml**:
             <artifactId>maven-compiler-plugin</artifactId>
             <version>3.10.1</version>
             <configuration>
-                <source>1.8</source>
-                <target>1.8</target>
+                <source>17</source>
+                <target>17</target>
             </configuration>
         </plugin>
         <plugin>

@@ -17,10 +17,6 @@ if (secretPropsFile.exists()) {
     ext["signing.key"] = System.getenv('SIGNING_KEY')
 }
 
-release {
-    tagTemplate = '${version}'
-}
-
 jar {
     from sourceSets.main.output
     from("src/main/services") {
