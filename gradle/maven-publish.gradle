@@ -1,7 +1,5 @@
-apply plugin: 'net.researchgate.release'
 apply plugin: 'maven-publish'
 apply plugin: 'signing'
-apply plugin: 'com.ferranpons.twitterplugin'
 
 File secretPropsFile = project.rootProject.file('local.properties')
 if (secretPropsFile.exists()) {
@@ -128,18 +126,4 @@ signing {
 
 tasks.withType(GenerateModuleMetadata) {
     enabled = false
-}
-
-twitterPlugin {
-    def shouldTweet = project.hasProperty('shouldTweet') ? project.property('shouldTweet') : System.getenv('SHOULD_TWEET')
-    if (shouldTweet && shouldTweet.toBoolean()) {
-        def releaseVersion = project.hasProperty('release.releaseVersion') ? project.property('release.releaseVersion') : System.getenv('RELEASE_VERSION')
-        def tweet = "Test Data Supplier ${releaseVersion} has been released: ${project.projectUrl} #testng #testdatasupplier #java"
-
-        consumerKey = project.ext["twitter.consumerKey"]
-        consumerSecret = project.ext["twitter.consumerSecret"]
-        accessToken = project.ext["twitter.accessToken"]
-        accessTokenSecret = project.ext["twitter.accessTokenSecret"]
-        message = "${tweet}"
-    }
 }

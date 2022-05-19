@@ -60,7 +60,7 @@ public class CoreTests extends PowerMockTestCase {
 
     @Test
     public void shouldLoadImplementedBrowserServices() {
-        assertThat(browsers).hasSize(4);
+        assertThat(browsers).hasSize(5);
     }
 
     @Test
@@ -68,6 +68,7 @@ public class CoreTests extends PowerMockTestCase {
         assertThat(browsers)
             .extracting(Browser::name)
             .containsExactlyInAnyOrder(
+                Browser.Name.Chrome,
                 Browser.Name.Chrome,
                 Browser.Name.Edge,
                 Browser.Name.Firefox,
@@ -80,7 +81,7 @@ public class CoreTests extends PowerMockTestCase {
         assertThat(browsers)
             .extracting(Browser::name)
             .extracting(Browser.Name::getBrowserName)
-            .containsExactlyInAnyOrder("chrome", "firefox", "edge", "ie");
+            .containsExactlyInAnyOrder("chrome", "chrome", "firefox", "edge", "ie");
     }
 
     @Test
@@ -89,6 +90,7 @@ public class CoreTests extends PowerMockTestCase {
             .extracting(Browser::name)
             .extracting(Browser.Name::getDriverClassName)
             .containsExactlyInAnyOrder(
+                "org.openqa.selenium.chrome.ChromeDriver",
                 "org.openqa.selenium.chrome.ChromeDriver",
                 "org.openqa.selenium.firefox.FirefoxDriver",
                 "org.openqa.selenium.edge.EdgeDriver",

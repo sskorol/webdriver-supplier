@@ -1,14 +1,12 @@
 plugins {
     id "java-library"
     id "java"
-    id 'ru.vyarus.quality' version '4.3.0'
+    id 'ru.vyarus.quality' version '4.7.0'
     id "jacoco"
     id "maven-publish"
     id "signing"
     id "io.github.gradle-nexus.publish-plugin" version "1.1.0"
-    id "net.researchgate.release" version "2.8.1"
-    id "com.ferranpons.twitterplugin" version "1.1.0"
-    id "com.github.ben-manes.versions" version "0.39.0"
+    id "com.github.ben-manes.versions" version "0.42.0"
 }
 
 group 'io.github.sskorol'
@@ -19,14 +17,14 @@ ext {
     gradleScriptDir = "${rootProject.projectDir}/gradle".toString()
     projectUrl = "https://github.com/sskorol/webdriver-supplier"
     moduleName = "io.github.sskorol.webdriversupplier"
-    lombokVersion = "1.18.22"
+    lombokVersion = "1.18.24"
 }
 
 apply plugin: 'java'
 apply plugin: 'jacoco'
 
-sourceCompatibility = JavaVersion.VERSION_11
-targetCompatibility = JavaVersion.VERSION_11
+sourceCompatibility = JavaVersion.VERSION_17
+targetCompatibility = JavaVersion.VERSION_17
 
 repositories {
     mavenCentral()
@@ -35,18 +33,23 @@ repositories {
 
 dependencies {
     compileOnly("org.projectlombok:lombok:${lombokVersion}")
+    compileOnly('com.google.code.findbugs:findbugs-annotations:3.0.1')
     testCompileOnly("org.projectlombok:lombok:${lombokVersion}")
     annotationProcessor("org.projectlombok:lombok:${lombokVersion}")
     testAnnotationProcessor("org.projectlombok:lombok:${lombokVersion}")
     implementation(
-            'org.testng:testng:7.5',
+            'org.testng:testng:7.6.0',
             'org.jooq:joor:0.9.14',
             'one.util:streamex:0.8.1',
             'io.vavr:vavr:0.10.4',
-            'org.seleniumhq.selenium:selenium-java:4.1.3',
+            'org.seleniumhq.selenium:selenium-java:4.1.4',
+            'org.bouncycastle:bcprov-jdk15on:1.70',
+            'com.fasterxml.jackson.core:jackson-databind:2.13.3',
             'io.github.bonigarcia:webdrivermanager:5.1.1',
             'org.aeonbits.owner:owner:1.0.12',
-            'org.apache.commons:commons-lang3:3.12.0'
+            'commons-io:commons-io:2.11.0',
+            'org.apache.commons:commons-lang3:3.12.0',
+            'io.github.sskorol:cdt-java-client:5.0.0'
     )
     testImplementation('org.assertj:assertj-core:3.22.0',
             'org.mockito:mockito-core:2.12.0',
@@ -59,7 +62,7 @@ if (project.hasProperty('release')) {
     apply from: "${gradleScriptDir}/maven-publish.gradle"
 }
 
-jacoco.toolVersion = "0.8.7"
+jacoco.toolVersion = "0.8.8"
 jacocoTestReport {
     reports {
         xml.required = true
@@ -75,5 +78,9 @@ tasks.named('wrapper') {
 test {
     useTestNG() {
         suites 'src/test/resources/smoke-suite.xml'
+    }
+
+    doFirst {
+        jvmArgs = ['--add-opens', 'java.base/java.lang.invoke=ALL-UNNAMED']
     }
 }
