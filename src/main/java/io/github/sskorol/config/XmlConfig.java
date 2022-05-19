@@ -1,5 +1,6 @@
 package io.github.sskorol.config;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.openqa.selenium.Platform;
@@ -16,6 +17,7 @@ import static org.openqa.selenium.remote.CapabilityType.*;
  */
 @RequiredArgsConstructor
 @SuppressWarnings("FinalLocalVariable")
+@SuppressFBWarnings("EI_EXPOSE_REP2")
 public class XmlConfig {
 
     public static final String TEST_NAME = "testName";

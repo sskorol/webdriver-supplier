@@ -1,11 +1,8 @@
 package io.github.sskorol.listeners;
 
-import io.github.sskorol.core.Browser;
-import io.github.sskorol.core.ScreenshotConsumer;
-import io.github.sskorol.core.WebDriverProvider;
+import io.github.sskorol.cdt.services.ChromeDevToolsService;
+import io.github.sskorol.core.*;
 import io.github.sskorol.config.XmlConfig;
-import io.vavr.Tuple;
-import io.vavr.Tuple2;
 import io.vavr.control.Try;
 import lombok.val;
 import one.util.streamex.StreamEx;
@@ -16,25 +13,25 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 import org.testng.ITestResult;
 import org.testng.SkipException;
 
-import java.time.Duration;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import static io.github.sskorol.utils.ServiceLoaderUtils.load;
 import static io.github.sskorol.config.WebDriverConfig.WD_CONFIG;
 import static io.github.sskorol.core.WebDriverFactory.WDP_DEFAULT;
+import static java.time.Duration.ofSeconds;
 import static java.util.Optional.ofNullable;
 import static org.openqa.selenium.OutputType.BYTES;
 
 @SuppressWarnings({"MissingJavadocType", "FinalLocalVariable"})
 public abstract class BaseListener {
 
-    private static final ThreadLocal<Tuple2<WebDriver, WebDriverWait>> DRIVER_CONTAINER = new ThreadLocal<>();
+    private static final ThreadLocal<WebDriverContainer> DRIVER_CONTAINER = new ThreadLocal<>();
     private static final List<Browser> BROWSERS = new CopyOnWriteArrayList<>();
     private static final List<WebDriverProvider> WEB_DRIVER_PROVIDERS = new CopyOnWriteArrayList<>();
     private static final List<ScreenshotConsumer> SCREENSHOT_CONSUMERS = new CopyOnWriteArrayList<>();
 
-    public static Tuple2<WebDriver, WebDriverWait> getDriverMetaData() {
+    public static WebDriverContainer getDriverMetaData() {
         return DRIVER_CONTAINER.get();
     }
 
@@ -43,11 +40,13 @@ public abstract class BaseListener {
     }
 
     public void setupDriver(final XmlConfig context, final ITestResult testResult) {
-        final List<WebDriverProvider> webDriverProviders = getWebDriverProviders();
+        val webDriverProviders = getWebDriverProviders();
+        val browser = getCurrentBrowser(context);
         val driver = StreamEx.of(webDriverProviders)
             .findFirst(this::isWebDriverProviderMatching)
-            .map(wdp -> wdp.createDriver(getCurrentBrowser(context), context))
-            .map(d -> Tuple.of(d, new WebDriverWait(d, Duration.ofSeconds(WD_CONFIG.wdWaitTimeout()))))
+            .map(wdp -> wdp.createDriver(browser, context))
+            .map(d -> new WebDriverContainer(d, new WebDriverWait(d, ofSeconds(WD_CONFIG.wdWaitTimeout())))
+                .withDevToolsService(getDevToolsService(browser, d)))
             .orElse(null);
 
         if (driver == null) {
@@ -61,8 +60,10 @@ public abstract class BaseListener {
     public void cleanUp(final ITestResult testResult) {
         ofNullable(getDriverMetaData())
             .ifPresent(md -> {
-                takeScreenshot(md._1, testResult);
-                Try.run(md._1::quit);
+                ofNullable(md.getDevToolsService()).ifPresent(cdp -> Try.run(cdp::close));
+                val driver = md.getWebDriver();
+                takeScreenshot(driver, testResult);
+                Try.run(driver::quit);
             });
         DRIVER_CONTAINER.remove();
     }
@@ -87,6 +88,11 @@ public abstract class BaseListener {
                                                  + config.getBrowser() + " browser."));
     }
 
+    private ChromeDevToolsService getDevToolsService(final Browser browser, final WebDriver driver) {
+        return CDP.class.isAssignableFrom(browser.getClass()) && driver instanceof RemoteWebDriver
+               ? ((CDP) browser).initCDP(((RemoteWebDriver) driver).getSessionId().toString()) : null;
+    }
+
     private boolean isWebDriverProviderMatching(final WebDriverProvider provider) {
         final List<WebDriverProvider> webDriverProviders = getWebDriverProviders();
         return (webDriverProviders.size() == 1 && WDP_DEFAULT.equals(provider.label()))
@@ -95,7 +101,7 @@ public abstract class BaseListener {
 
     private void injectSessionId(final ITestResult testResult) {
         ofNullable(DRIVER_CONTAINER.get())
-            .map(t -> t._1)
+            .map(WebDriverContainer::getWebDriver)
             .filter(d -> d instanceof RemoteWebDriver)
             .map(d -> ((RemoteWebDriver) d).getSessionId())
             .ifPresent(id -> testResult.setAttribute("sessionId", id));

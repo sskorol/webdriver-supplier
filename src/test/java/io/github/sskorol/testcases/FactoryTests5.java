@@ -8,21 +8,21 @@ public class FactoryTests5 {
 
     @Test
     public void test17() {
-        getDriverMetaData()._1.get("https://google.com/ncr");
+        getDriverMetaData().getWebDriver().get("https://google.com/ncr");
     }
 
     @Test
     public void test18() {
-        getDriverMetaData()._1.get("https://google.com/ncr");
+        getDriverMetaData().getWebDriver().get("https://google.com/ncr");
     }
 
     @Test
     public void test19() {
-        getDriverMetaData()._1.get("https://google.com/ncr");
+        getDriverMetaData().getWebDriver().get("https://google.com/ncr");
     }
 
     @Test
     public void test20() {
-        getDriverMetaData()._1.get("https://google.com/ncr");
+        getDriverMetaData().getWebDriver().get("https://google.com/ncr");
     }
 }

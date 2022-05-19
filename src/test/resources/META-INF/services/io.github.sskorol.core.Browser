@@ -1,4 +1,5 @@
 io.github.sskorol.config.Firefox
 io.github.sskorol.config.Chrome
+io.github.sskorol.config.RemoteChrome
 io.github.sskorol.config.Edge
 io.github.sskorol.config.IE
