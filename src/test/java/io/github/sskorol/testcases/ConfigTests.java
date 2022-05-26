@@ -49,7 +49,7 @@ public class ConfigTests {
 
     @Test
     public void shouldFailConvertingToDimension() {
-        assertThat(toDimension("1280")).isEqualTo(Optional.empty());
+        assertThat(toDimension("1280")).isEmpty();
     }
 
     @Test
@@ -86,7 +86,7 @@ public class ConfigTests {
         parameters.put(PLATFORM_NAME, "linux");
 
         final XmlConfig config = new XmlConfig(parameters);
-        assertThat(config.toString()).isEqualTo("chrome 96.0 LINUX");
+        assertThat(config.toString()).hasToString("chrome 96.0 LINUX");
     }
 
     @Test
@@ -96,7 +96,7 @@ public class ConfigTests {
         parameters.put(PLATFORM_NAME, "mac");
 
         final XmlConfig config = new XmlConfig(parameters);
-        assertThat(config.toString()).isEqualTo("chrome MAC");
+        assertThat(config.toString()).hasToString("chrome MAC");
     }
 
     @Test
@@ -106,7 +106,7 @@ public class ConfigTests {
         parameters.put(BROWSER_VERSION, "99.9");
 
         final XmlConfig config = new XmlConfig(parameters);
-        assertThat(config.toString()).isEqualTo("chrome 99.9 MAC");
+        assertThat(config.toString()).hasToString("chrome 99.9 MAC");
     }
 
     @Test
@@ -115,7 +115,7 @@ public class ConfigTests {
         parameters.put(BROWSER_NAME, "chrome");
 
         final XmlConfig config = new XmlConfig(parameters);
-        assertThat(config.toString()).isEqualTo("chrome MAC");
+        assertThat(config.toString()).hasToString("chrome MAC");
     }
 
     @Test(expectedExceptions = WebDriverException.class)

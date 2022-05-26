@@ -4,7 +4,6 @@ import io.github.sskorol.cdt.services.ChromeDevToolsService;
 import io.github.sskorol.core.*;
 import io.github.sskorol.config.XmlConfig;
 import io.vavr.control.Try;
-import lombok.val;
 import one.util.streamex.StreamEx;
 import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
@@ -39,18 +38,19 @@ public abstract class BaseListener {
         return WEB_DRIVER_PROVIDERS;
     }
 
-    public void setupDriver(final XmlConfig context, final ITestResult testResult) {
-        val webDriverProviders = getWebDriverProviders();
-        val browser = getCurrentBrowser(context);
-        val driver = StreamEx.of(webDriverProviders)
+    public void setupDriver(final XmlConfig config, final ITestResult testResult) {
+        var webDriverProviders = getWebDriverProviders();
+        var browser = getCurrentBrowser(config);
+        var driver = StreamEx.of(webDriverProviders)
             .findFirst(this::isWebDriverProviderMatching)
-            .map(wdp -> wdp.createDriver(browser, context))
-            .map(d -> new WebDriverContainer(d, new WebDriverWait(d, ofSeconds(WD_CONFIG.wdWaitTimeout())))
-                .withDevToolsService(getDevToolsService(browser, d)))
+            .map(wdp -> wdp.createDriver(browser, config))
+            .map(d -> new WebDriverContainer(d, new WebDriverWait(d, ofSeconds(WD_CONFIG.wdWaitTimeout())), config)
+                .withDevToolsService(getDevToolsService(browser, d))
+            )
             .orElse(null);
 
         if (driver == null) {
-            throw new SkipException("Unable to find a suitable driver for " + context.toString());
+            throw new SkipException("Unable to find a suitable driver for " + config.toString());
         }
 
         DRIVER_CONTAINER.set(driver);
@@ -61,7 +61,7 @@ public abstract class BaseListener {
         ofNullable(getDriverMetaData())
             .ifPresent(md -> {
                 ofNullable(md.getDevToolsService()).ifPresent(cdp -> Try.run(cdp::close));
-                val driver = md.getWebDriver();
+                var driver = md.getWebDriver();
                 takeScreenshot(driver, testResult);
                 Try.run(driver::quit);
             });
@@ -69,7 +69,7 @@ public abstract class BaseListener {
     }
 
     public void loadServiceProviders() {
-        final ClassLoader loader = getClass().getClassLoader();
+        var loader = getClass().getClassLoader();
         BROWSERS.addAll(load(Browser.class, loader));
         WEB_DRIVER_PROVIDERS.addAll(load(WebDriverProvider.class, loader));
         SCREENSHOT_CONSUMERS.addAll(load(ScreenshotConsumer.class, loader));
@@ -89,12 +89,12 @@ public abstract class BaseListener {
     }
 
     private ChromeDevToolsService getDevToolsService(final Browser browser, final WebDriver driver) {
-        return CDP.class.isAssignableFrom(browser.getClass()) && driver instanceof RemoteWebDriver
-               ? ((CDP) browser).initCDP(((RemoteWebDriver) driver).getSessionId().toString()) : null;
+        return CDP.class.isAssignableFrom(browser.getClass()) && driver instanceof RemoteWebDriver rwd
+               ? ((CDP) browser).initCDP((rwd).getSessionId().toString()) : null;
     }
 
     private boolean isWebDriverProviderMatching(final WebDriverProvider provider) {
-        final List<WebDriverProvider> webDriverProviders = getWebDriverProviders();
+        var webDriverProviders = getWebDriverProviders();
         return (webDriverProviders.size() == 1 && WDP_DEFAULT.equals(provider.label()))
                || (webDriverProviders.size() > 1 && !WDP_DEFAULT.equals(provider.label()));
     }
@@ -102,14 +102,14 @@ public abstract class BaseListener {
     private void injectSessionId(final ITestResult testResult) {
         ofNullable(DRIVER_CONTAINER.get())
             .map(WebDriverContainer::getWebDriver)
-            .filter(d -> d instanceof RemoteWebDriver)
+            .filter(RemoteWebDriver.class::isInstance)
             .map(d -> ((RemoteWebDriver) d).getSessionId())
             .ifPresent(id -> testResult.setAttribute("sessionId", id));
     }
 
     private void takeScreenshot(final WebDriver driver, final ITestResult testResult) {
         if (WD_CONFIG.takeScreenshot()) {
-            final byte[] screenshot = ((TakesScreenshot) driver).getScreenshotAs(BYTES);
+            var screenshot = ((TakesScreenshot) driver).getScreenshotAs(BYTES);
             StreamEx.of(SCREENSHOT_CONSUMERS).forEach(sc -> sc.handle(screenshot, testResult));
         }
     }

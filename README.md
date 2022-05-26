@@ -63,7 +63,7 @@ targetCompatibility = JavaVersion.VERSION_17
 dependencies {
     compile(
             'org.testng:testng:7.6.0',
-            'io.github.sskorol:webdriver-supplier:1.0.0'
+            'io.github.sskorol:webdriver-supplier:1.1.0'
     )
 }
     
@@ -132,7 +132,7 @@ Add the following configuration into **pom.xml**:
     <dependency>
         <groupId>io.github.sskorol</groupId>
         <artifactId>webdriver-supplier</artifactId>
-        <version>1.0.0</version>
+        <version>1.1.0</version>
     </dependency>
 </dependencies>
     
@@ -206,7 +206,7 @@ public class Chrome implements Browser {
 }
 ```
 
-By default only `name()` method should be overridden. You can pick one from the following enum:
+By default, only `name()` method should be overridden. You can pick one from the following enum:
 
 ```java
 enum Name {
@@ -366,7 +366,7 @@ public WebDriver createDriver(final Browser browser, final XmlConfig config) {
 ## WebDriver access
 
 Newly raised `WebDriver` instance can be retrieved via `getDriverMetaData` method call. Just add the following import 
-to get a full access to `Tuple2<WebDriver, WebDriverWait>`:
+to get full access to `Tuple2<WebDriver, WebDriverWait>`:
 
 ```java
 import static io.github.sskorol.listeners.BaseListener.getDriverMetaData;
@@ -405,6 +405,26 @@ Next, you can access `ChromeDevToolsService` from within `WebDriverContainer`:
 
 ```java
 final ChromeDevToolsService cdp = getDriverMetaData().getDevToolsService();
+```
+
+## Custom parameters
+
+If you want to access custom parameters from `testng.xml` (e.g. as a feature toggling technique), you can use the following:
+
+```xml
+<classes>
+    <class name="path.to.your.TestClass">
+        <parameter name="feature1" value="value1"/>
+    </class>
+</classes>
+```
+
+Then you can access `XmlConfig` object with all scoped parameters from within WS container instance:
+```java
+final WebDriverContainer wdMeta = getDriverMetaData();
+final XmlConfig config = wdMeta.getConfig();
+Optional.ofNullable(config.getValue("feature1"))
+    .ifPresent(System.out::println);
 ```
 
 ## SessionId access
@@ -478,7 +498,7 @@ targetCompatibility = JavaVersion.VERSION_17
     
 dependencies {
     compile('org.testng:testng:7.6.0',
-            'io.github.sskorol:webdriver-supplier:1.0.0'
+            'io.github.sskorol:webdriver-supplier:1.1.0'
     )
 }
     
