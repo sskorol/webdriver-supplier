@@ -1,12 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd" >
-<suite name="Smoke suite">
-	<test name="Aggregated tests">
-		<classes>
-			<class name="io.github.sskorol.testcases.ReflectionTests"/>
-			<class name="io.github.sskorol.testcases.ConfigTests"/>
-			<class name="io.github.sskorol.testcases.CoreTests"/>
-			<class name="io.github.sskorol.testcases.ListenerTests"/>
-		</classes>
-	</test>
+<suite name="Smoke suite" parallel="classes">
+    <test name="Aggregated tests">
+        <classes>
+            <class name="io.github.sskorol.testcases.ReflectionTests"/>
+            <class name="io.github.sskorol.testcases.ConfigTests"/>
+            <class name="io.github.sskorol.testcases.CoreTests"/>
+            <class name="io.github.sskorol.testcases.ListenerTests"/>
+            <class name="io.github.sskorol.testcases.CDPTests"/>
+        </classes>
+    </test>
 </suite>

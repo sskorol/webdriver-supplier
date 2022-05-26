@@ -1,25 +1,20 @@
 package io.github.sskorol.testcases;
 
 import io.github.bonigarcia.wdm.WebDriverManager;
-import io.github.sskorol.config.PowerMockObjectFactory;
 import io.github.sskorol.config.XmlConfig;
 import io.github.sskorol.core.Browser;
 import io.github.sskorol.core.WebDriverProvider;
 import one.util.streamex.StreamEx;
 import org.joor.Reflect;
+import org.mockito.MockedStatic;
 import org.openqa.selenium.Capabilities;
 import org.openqa.selenium.Platform;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.edge.EdgeDriver;
 import org.openqa.selenium.edge.EdgeOptions;
 import org.openqa.selenium.remote.RemoteWebDriver;
-import org.powermock.api.mockito.PowerMockito;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.testng.PowerMockTestCase;
-import org.testng.ITestObjectFactory;
 import org.testng.SkipException;
 import org.testng.annotations.BeforeClass;
-import org.testng.annotations.ObjectFactory;
 import org.testng.annotations.Test;
 
 import java.net.MalformedURLException;
@@ -38,8 +33,7 @@ import static org.mockito.Mockito.*;
 import static org.openqa.selenium.remote.CapabilityType.BROWSER_NAME;
 import static org.openqa.selenium.remote.CapabilityType.PLATFORM_NAME;
 
-@PrepareForTest(WebDriverManager.class)
-public class CoreTests extends PowerMockTestCase {
+public class CoreTests {
 
     private List<Browser> browsers;
     private List<WebDriverProvider> factories;
@@ -196,19 +190,20 @@ public class CoreTests extends PowerMockTestCase {
             }
         });
 
-        PowerMockito.mockStatic(WebDriverManager.class);
-        WebDriverManager browserManager = mock(WebDriverManager.class, RETURNS_DEEP_STUBS);
-        WebDriver driver = mock(EdgeDriver.class, RETURNS_DEEP_STUBS);
-        WebDriverProvider spyFactory = spy(defaultFactory);
-        Reflect spyReflectedDriver = spy(spyFactory.wrapDriver(edge));
+        try (MockedStatic<WebDriverManager> wdm = mockStatic(WebDriverManager.class)) {
+            WebDriverManager browserManager = mock(WebDriverManager.class, RETURNS_DEEP_STUBS);
+            WebDriver driver = mock(EdgeDriver.class, RETURNS_DEEP_STUBS);
+            WebDriverProvider spyFactory = spy(defaultFactory);
+            Reflect spyReflectedDriver = spy(spyFactory.wrapDriver(edge));
 
-        PowerMockito.when(WebDriverManager.getInstance((Class<? extends WebDriver>) spyReflectedDriver.type()))
-            .thenReturn(browserManager);
-        doNothing().when(browserManager).setup();
-        doReturn(spyReflectedDriver).when(spyFactory).wrapDriver(edge);
-        doReturn(on(driver)).when(spyReflectedDriver).create(edge.configuration(config));
+            wdm.when(() -> WebDriverManager.getInstance((Class<? extends WebDriver>) spyReflectedDriver.type()))
+                .thenReturn(browserManager);
+            doNothing().when(browserManager).setup();
+            doReturn(spyReflectedDriver).when(spyFactory).wrapDriver(edge);
+            doReturn(on(driver)).when(spyReflectedDriver).create(edge.configuration(config));
 
-        assertThat(spyFactory.createDriver(edge, config)).isInstanceOf(EdgeDriver.class);
+            assertThat(spyFactory.createDriver(edge, config)).isInstanceOf(EdgeDriver.class);
+        }
     }
 
     @Test
@@ -226,10 +221,5 @@ public class CoreTests extends PowerMockTestCase {
         assertThat(catchThrowable(() -> defaultFactory.createDriver(browser, config)))
             .isInstanceOf(SkipException.class)
             .hasStackTraceContaining("java.net.MalformedURLException");
-    }
-
-    @ObjectFactory
-    public ITestObjectFactory getObjectFactory() {
-        return new PowerMockObjectFactory();
     }
 }
