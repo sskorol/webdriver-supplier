@@ -15,7 +15,7 @@ import static java.util.Optional.ofNullable;
 import static org.joor.Reflect.onClass;
 import static org.openqa.selenium.remote.CapabilityType.*;
 
-@SuppressWarnings("MissingJavadocType")
+@SuppressWarnings({"MissingJavadocType", "FinalLocalVariable"})
 public final class TestNGUtils {
 
     private TestNGUtils() {
@@ -62,8 +62,8 @@ public final class TestNGUtils {
     }
 
     public static boolean isMethodPresent(final XmlClass xmlClass, final String method) {
-        return StreamEx.of(xmlClass.getIncludedMethods())
-                       .anyMatch(xmlInclude -> xmlInclude.getName().equals(method));
+        var methods = xmlClass.getIncludedMethods();
+        return methods.isEmpty() || StreamEx.of(methods).anyMatch(xmlInclude -> xmlInclude.getName().equals(method));
     }
 
     public static XmlConfig mapConfiguration(final Map<String, String> parameters, final String method) {
