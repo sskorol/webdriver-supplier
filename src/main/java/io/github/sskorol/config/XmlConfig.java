@@ -3,8 +3,10 @@ package io.github.sskorol.config;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
+import one.util.streamex.EntryStream;
 import org.openqa.selenium.Platform;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
@@ -22,6 +24,7 @@ public class XmlConfig {
 
     public static final String TEST_NAME = "testName";
     private final Map<String, String> parameters;
+    private final List<String> mandatoryParameters = List.of(BROWSER_NAME, BROWSER_VERSION, PLATFORM_NAME, TEST_NAME);
 
     public String getBrowser() {
         return getValue(BROWSER_NAME)
@@ -62,6 +65,17 @@ public class XmlConfig {
 
     public Optional<String> getValue(final String key) {
         return ofNullable(parameters.get(key));
+    }
+
+    public Map<String, String> getCustomParameters() {
+        return EntryStream.of(parameters)
+            .filterKeys(key -> !mandatoryParameters.contains(key))
+            .toMap();
+    }
+
+    public XmlConfig extendParameters(final Map<String, String> parameters) {
+        this.parameters.putAll(parameters);
+        return this;
     }
 
     @Override

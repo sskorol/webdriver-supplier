@@ -63,7 +63,7 @@ targetCompatibility = JavaVersion.VERSION_17
 dependencies {
     compile(
             'org.testng:testng:7.6.0',
-            'io.github.sskorol:webdriver-supplier:1.1.1'
+            'io.github.sskorol:webdriver-supplier:1.1.3'
     )
 }
     
@@ -132,7 +132,7 @@ Add the following configuration into **pom.xml**:
     <dependency>
         <groupId>io.github.sskorol</groupId>
         <artifactId>webdriver-supplier</artifactId>
-        <version>1.1.1</version>
+        <version>1.1.3</version>
     </dependency>
 </dependencies>
     
