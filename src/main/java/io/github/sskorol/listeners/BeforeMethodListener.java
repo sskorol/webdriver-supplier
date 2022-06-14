@@ -1,7 +1,7 @@
 package io.github.sskorol.listeners;
 
 import io.github.sskorol.config.XmlConfig;
-import lombok.val;
+import one.util.streamex.StreamEx;
 import org.testng.*;
 
 import java.util.*;
@@ -27,16 +27,29 @@ public class BeforeMethodListener extends BaseListener implements IInvokedMethod
     @Override
     public void beforeInvocation(final IInvokedMethod method, final ITestResult testResult) {
         if (method.isTestMethod()) {
-            val config = getBrowserConfiguration(
-                testResult.getTestContext().getCurrentXmlTest(),
-                method.getTestMethod().getMethodName()
-            )
-                .filter(Optional::isPresent)
-                .map(Optional::get)
-                .findFirst(XmlConfig::hasBrowser)
-                .orElseThrow(() -> new SkipException("Unable to find a valid browser configuration. Check if SPI "
-                                                     + "implementation class is provided, "
-                                                     + "and browserName parameter is specified in xml."));
+            var configs = getBrowserConfiguration(
+                testResult.getTestContext().getCurrentXmlTest(), method
+            ).toList();
+
+            var customParameters = StreamEx.of(configs)
+                                           .filter(Optional::isPresent)
+                                           .map(Optional::get)
+                                           .map(XmlConfig::getCustomParameters)
+                                           .reduce(new HashMap<>(), (map, parameters) -> {
+                                               map.putAll(parameters);
+                                               return map;
+                                           });
+
+            var config = StreamEx.of(configs)
+                                 .filter(Optional::isPresent)
+                                 .map(Optional::get)
+                                 .findFirst(XmlConfig::hasBrowser)
+                                 .map(xmlConfig -> xmlConfig.extendParameters(customParameters))
+                                 .orElseThrow(() -> new SkipException(
+                                     "Unable to find a valid browser configuration. "
+                                     + "Check if SPI implementation class is provided, "
+                                     + "and browserName parameter is specified in xml."
+                                 ));
             setupDriver(config, testResult);
         }
     }
